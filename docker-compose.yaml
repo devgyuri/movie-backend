@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  my-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/myFolder/src
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env.docker
+
+  my-database:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: 'movieProject'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - 3306:3306
