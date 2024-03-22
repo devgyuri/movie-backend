@@ -5,5 +5,10 @@ export interface IMoviesServiceCreateMovieOne {
 }
 
 export interface IMoviesServiceCreateMovieAll {
-  data: Omit<Movie, 'avg_star' | 'cnt_star'>[];
+  data: IMoviesServiceOpenMovieInfo[];
 }
+
+export type IMoviesServiceOpenMovieInfo = Omit<
+  Movie,
+  'avg_star' | 'cnt_star' | 'boxOffice' | 'genres'
+>;

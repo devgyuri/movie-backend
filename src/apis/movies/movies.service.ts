@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import {
   IMoviesServiceCreateMovieAll,
   IMoviesServiceCreateMovieOne,
+  IMoviesServiceOpenMovieInfo,
 } from './interfaces/movies-service.interface';
 
 @Injectable()
@@ -34,7 +35,7 @@ export class MoviesService {
     const batch = 10;
 
     for (let i = 0; i <= totalCnt / batch; i++) {
-      const movieArr: Omit<Movie, 'avg_star' | 'cnt_star'>[] = [];
+      const movieArr: IMoviesServiceOpenMovieInfo[] = [];
 
       const result = await axios.get(
         'http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp',
@@ -74,7 +75,7 @@ export class MoviesService {
         const rating = Number(rawData.rating.replace(/[^0-9]/g, ''));
         const plot = rawData.plots.plot[0].plotText;
 
-        const movieInfo: Omit<Movie, 'avg_star' | 'cnt_star'> = {
+        const movieInfo: IMoviesServiceOpenMovieInfo = {
           id,
           title,
           open_dt,

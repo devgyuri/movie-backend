@@ -2,6 +2,36 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type BoxOffice {
+  id: String!
+  date: DateTime!
+  movies: [Movie!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Genre {
+  id: String!
+  name: String!
+  movies: [Movie!]!
+}
+
+type Movie {
+  id: String!
+  title: String!
+  open_dt: DateTime!
+  audi_acc: Int!
+  avg_star: Float!
+  cnt_star: Int!
+  rating: Int!
+  plot: String!
+  boxOffice: [BoxOffice!]!
+  genres: [Genre!]!
+}
+
 type Query {
   fetchTemp: String!
 }

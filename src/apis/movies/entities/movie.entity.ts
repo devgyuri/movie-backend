@@ -1,5 +1,7 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { BoxOffice } from 'src/apis/boxOffice/entities/boxOffice.entity';
+import { Genre } from 'src/apis/genres/entities/genre.entity';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -35,4 +37,14 @@ export class Movie {
   @Column('text')
   @Field(() => String)
   plot: string;
+
+  @JoinTable()
+  @ManyToMany(() => BoxOffice, (boxOffice) => boxOffice.movies)
+  @Field(() => [BoxOffice])
+  boxOffice: BoxOffice[];
+
+  @JoinTable()
+  @ManyToMany(() => Genre, (genres) => genres.movies)
+  @Field(() => [Genre])
+  genres: Genre[];
 }
