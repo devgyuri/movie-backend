@@ -8,7 +8,7 @@ export class Movie {
   @Field(() => String)
   id: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 100 })
   @Field(() => String)
   title: string;
 
@@ -16,17 +16,21 @@ export class Movie {
   @Field(() => Date)
   open_dt: Date;
 
-  @Column('int')
+  @Column({ type: 'int', default: 0 })
   @Field(() => Int)
   audi_acc: number;
 
-  @Column({ type: 'decimal', precision: 5, scale: 2 })
+  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0.0 })
   @Field(() => Float)
   avg_star: number;
 
-  @Column({ type: 'varchar', length: 10 })
-  @Field(() => String)
-  rating: string;
+  @Column({ type: 'int', default: 0 })
+  @Field(() => Int)
+  cnt_star: number;
+
+  @Column({ type: 'int', default: 0 })
+  @Field(() => Int)
+  rating: number;
 
   @Column('text')
   @Field(() => String)

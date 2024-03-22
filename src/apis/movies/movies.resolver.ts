@@ -1,13 +1,12 @@
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Movie } from './entities/movie.entity';
 import { MoviesService } from './movies.service';
 
 @Resolver()
 export class MoviesResolver {
   constructor(private readonly moviesService: MoviesService) {}
 
-  @Mutation(() => Movie)
-  createMovie(): Promise<Movie> {
+  @Mutation(() => String)
+  initializeTable(): Promise<string> {
     return this.moviesService.getOpenMovieInfo();
   }
 
