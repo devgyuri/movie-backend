@@ -8,12 +8,14 @@ import {
   IMoviesServiceCreateMovieOne,
   IMoviesServiceOpenMovieInfo,
 } from './interfaces/movies-service.interface';
+import { ActorsService } from '../actors/actors.service';
 
 @Injectable()
 export class MoviesService {
   constructor(
     @InjectRepository(Movie)
     private readonly moviesRepository: Repository<Movie>, //
+    private readonly actorsService: ActorsService,
   ) {}
 
   async getOpenMovieInfo(): Promise<string> {
@@ -30,7 +32,9 @@ export class MoviesService {
       },
     );
 
-    const totalCnt = info.data.Data[0].TotalCount;
+    console.log(info.data);
+    const totalCnt = 30;
+    // const totalCnt = info.data.Data[0].TotalCount;
     // console.log(totalCnt);
     const batch = 10;
 
@@ -43,8 +47,10 @@ export class MoviesService {
           params: {
             collection: 'kmdb_new2',
             ServiceKey: process.env.KMDB_API_KEY,
-            releaseDts: '20200101',
-            releaseDte: '20241231',
+            releaseDts: '20190101',
+            releaseDte: '20191231',
+            // releaseDts: '20200101',
+            // releaseDte: '20241231',
             sort: 'prodYear,1',
             listCount: batch,
             startCount: i * batch,
@@ -85,8 +91,14 @@ export class MoviesService {
         };
         movieArr.push(movieInfo);
       }
-      this.createMovieAll({ data: movieArr });
+      // this.createMovieAll({ data: movieArr });
     }
+
+    const actor = {
+      name: '김수현',
+      movieId: 'K28771',
+    };
+    await this.actorsService.createActor(actor);
     return 'DB initializing completed!';
   }
 
