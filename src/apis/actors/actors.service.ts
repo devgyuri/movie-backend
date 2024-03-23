@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, InsertResult, Repository } from 'typeorm';
 import { Actor } from './entities/actor.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IActorsServiceCreateActor } from './interfaces/actord-service.interface';
+import {
+  IActorsServiceFindByNames,
+  IActorsServiceBulkInsert,
+} from './interfaces/actors-service.interface';
 
 @Injectable()
 export class ActorsService {
@@ -11,12 +14,13 @@ export class ActorsService {
     private readonly actorsRepository: Repository<Actor>,
   ) {}
 
-  createActor({ name, movieId }: IActorsServiceCreateActor): Promise<Actor> {
-    return this.actorsRepository.save({
-      name,
-      movie: {
-        id: movieId,
-      },
+  findByNames({ actorNames }: IActorsServiceFindByNames): Promise<Actor[]> {
+    return this.actorsRepository.find({
+      where: { name: In(actorNames) },
     });
+  }
+
+  bulkInsert({ names }: IActorsServiceBulkInsert): Promise<InsertResult> {
+    return this.actorsRepository.insert(names);
   }
 }

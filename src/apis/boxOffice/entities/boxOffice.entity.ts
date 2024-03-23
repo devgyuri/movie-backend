@@ -1,6 +1,12 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Movie } from 'src/apis/movies/entities/movie.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -13,6 +19,7 @@ export class BoxOffice {
   @Field(() => Date)
   date: Date;
 
+  @JoinTable()
   @ManyToMany(() => Movie, (movies) => movies.boxOffice)
   @Field(() => [Movie])
   movies: Movie[];

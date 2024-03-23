@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Actor {
+  id: Int!
+  name: String!
+  movies: [Movie!]!
+}
+
 type BoxOffice {
   id: Int!
   date: DateTime!
@@ -12,6 +18,12 @@ type BoxOffice {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Director {
+  id: Int!
+  name: String!
+  movies: [Movie!]!
+}
 
 type Genre {
   id: Int!
@@ -30,11 +42,15 @@ type Movie {
   plot: String!
   boxOffice: [BoxOffice!]!
   genres: [Genre!]!
+  actors: [Actor!]!
+  directors: [Director!]!
 }
 
 type Query {
   fetchActor: String!
   fetchTemp: String!
+  fetchPoster: String!
+  fetchVod: String!
 }
 
 type Mutation {

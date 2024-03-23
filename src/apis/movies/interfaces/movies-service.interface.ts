@@ -10,5 +10,9 @@ export interface IMoviesServiceCreateMovieAll {
 
 export type IMoviesServiceOpenMovieInfo = Omit<
   Movie,
-  'avg_star' | 'cnt_star' | 'boxOffice' | 'genres'
+  'avg_star' | 'cnt_star' | 'boxOffice' | 'genres' | 'actors' | 'directors'
 >;
+
+export interface IMoviesServiceInsertActorInfo {
+  actorNames: string[];
+}

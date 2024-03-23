@@ -6,9 +6,13 @@ import { Repository } from 'typeorm';
 import {
   IMoviesServiceCreateMovieAll,
   IMoviesServiceCreateMovieOne,
+  IMoviesServiceInsertActorInfo,
   IMoviesServiceOpenMovieInfo,
 } from './interfaces/movies-service.interface';
 import { ActorsService } from '../actors/actors.service';
+import { Actor } from '../actors/entities/actor.entity';
+import { DirectorsService } from '../directors/directors.service';
+import { GenresService } from '../genres/genres.service';
 
 @Injectable()
 export class MoviesService {
@@ -16,7 +20,28 @@ export class MoviesService {
     @InjectRepository(Movie)
     private readonly moviesRepository: Repository<Movie>, //
     private readonly actorsService: ActorsService,
+    private readonly directorsService: DirectorsService,
+    private readonly genresService: GenresService,
   ) {}
+
+  async insertActorInfo({
+    actorNames,
+  }: IMoviesServiceInsertActorInfo): Promise<Partial<Actor>[]> {
+    // actorNames = ['김수현', '김고은', '이도현'];
+    const prevActors = await this.actorsService.findByNames({ actorNames });
+
+    const temp = [];
+    actorNames.forEach((el) => {
+      const isExists = prevActors.find((prevEl) => el === prevEl.name);
+      if (!isExists) {
+        temp.push({ name: el });
+      }
+    });
+
+    const newActors = await this.actorsService.bulkInsert({ names: temp });
+
+    return [...prevActors, ...newActors.identifiers];
+  }
 
   async getOpenMovieInfo(): Promise<string> {
     const info = await axios.get(
@@ -94,11 +119,26 @@ export class MoviesService {
       // this.createMovieAll({ data: movieArr });
     }
 
-    const actor = {
-      name: '김수현',
-      movieId: 'K28771',
-    };
-    await this.actorsService.createActor(actor);
+    // const actor = {
+    //   name: '김수현',
+    //   movieId: 'K28771',
+    // };
+    // await this.actorsService.createActor(actor);
+    // return 'DB initializing completed!';
+    const actorNames = ['김고은', '이도현', '박보영'];
+    const actors = await this.insertActorInfo({ actorNames });
+
+    const result2 = await this.moviesRepository.save({
+      id: 'AAAA2',
+      title: 'hello',
+      open_dt: new Date(),
+      audi_acc: 100,
+      rating: 100,
+      plot: 'test text',
+      actors,
+    });
+    console.log(result2);
+
     return 'DB initializing completed!';
   }
 

@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Movie } from 'src/apis/movies/entities/movie.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -13,7 +13,11 @@ export class Actor {
   @Field(() => String)
   name: string;
 
-  @ManyToOne(() => Movie)
-  @Field(() => Movie)
-  movie: Movie;
+  // @Column({ type: 'varchar', length: 10 })
+  // @Field(() => String)
+  // code: string;
+
+  @ManyToMany(() => Movie, (movies) => movies.actors)
+  @Field(() => [Movie])
+  movies: Movie[];
 }

@@ -5,11 +5,19 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { MoviesModule } from './apis/movies/movies.module';
 import { ActorsModule } from './apis/actors/actors.module';
+import { PostersModule } from './apis/posters/posters.module';
+import { VodsModule } from './apis/vods/posters.module';
+import { DirectorsModule } from './apis/directors/directors.module';
+import { GenresModule } from './apis/genres/genres.module';
 
 @Module({
   imports: [
     ActorsModule,
+    DirectorsModule,
+    GenresModule,
     MoviesModule,
+    PostersModule,
+    VodsModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

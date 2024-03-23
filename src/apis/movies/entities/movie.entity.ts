@@ -1,5 +1,7 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { Actor } from 'src/apis/actors/entities/actor.entity';
 import { BoxOffice } from 'src/apis/boxOffice/entities/boxOffice.entity';
+import { Director } from 'src/apis/directors/entities/director.entity';
 import { Genre } from 'src/apis/genres/entities/genre.entity';
 import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 
@@ -47,4 +49,13 @@ export class Movie {
   @ManyToMany(() => Genre, (genres) => genres.movies)
   @Field(() => [Genre])
   genres: Genre[];
+
+  @JoinTable()
+  @ManyToMany(() => Actor, (actors) => actors.movies)
+  @Field(() => [Actor])
+  actors: Actor[];
+
+  @ManyToMany(() => Director, (directors) => directors.movies)
+  @Field(() => [Director])
+  directors: Director[];
 }
