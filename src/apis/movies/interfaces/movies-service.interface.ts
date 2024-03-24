@@ -7,8 +7,8 @@ import { Vod } from 'src/apis/vods/entities/vod.entity';
 
 type RequiredBy<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
 
-export interface IMoviesServiceCreateMovieOne {
-  data: Movie;
+export interface IMoviesServiceCreateMovie {
+  data: IMoviesServiceOpenMovieInfo;
 }
 
 export interface IMoviesServiceCreateMovieAll {

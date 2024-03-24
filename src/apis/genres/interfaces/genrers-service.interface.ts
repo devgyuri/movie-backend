@@ -7,3 +7,7 @@ export interface IGenresServiceBulkInsert {
     name: string;
   }[];
 }
+
+export interface IGenresServiceCreateGenre {
+  name: string;
+}

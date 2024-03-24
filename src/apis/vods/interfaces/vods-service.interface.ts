@@ -8,3 +8,7 @@ export interface IVodsServiceCreateVod {
 export interface IVodsServiceCreateVodAll {
   vodArr: IMoviesServiceOpenVodInfo[];
 }
+
+// export interface IVodsServiceCreateVod {
+//   vod: IMoviesServiceOpenVodInfo;
+// }

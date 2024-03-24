@@ -8,10 +8,6 @@ import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 @Entity()
 @ObjectType()
 export class Movie {
-  constructor(newId: string) {
-    this.id = newId;
-  }
-
   @PrimaryColumn({ type: 'varchar', length: 10 })
   @Field(() => String)
   id: string;
@@ -44,7 +40,6 @@ export class Movie {
   @Field(() => String)
   plot: string;
 
-  @JoinTable()
   @ManyToMany(() => BoxOffice, (boxOffice) => boxOffice.movies)
   @Field(() => [BoxOffice])
   boxOffice: BoxOffice[];
@@ -59,6 +54,7 @@ export class Movie {
   @Field(() => [Actor])
   actors: Actor[];
 
+  @JoinTable()
   @ManyToMany(() => Director, (directors) => directors.movies)
   @Field(() => [Director])
   directors: Director[];

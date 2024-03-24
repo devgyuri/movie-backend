@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Director } from './entities/director.entity';
 import {
   IDirectorsServiceBulkInsert,
+  IDirectorsServiceCreateDirector,
   IDirectorsServiceFindByNames,
 } from './interfaces/directors-service.interface';
 
@@ -24,5 +25,11 @@ export class DirectorsService {
 
   bulkInsert({ names }: IDirectorsServiceBulkInsert): Promise<any> {
     return this.directorsRepository.insert(names);
+  }
+
+  createDirector({ name }: IDirectorsServiceCreateDirector): Promise<Director> {
+    return this.directorsRepository.save({
+      name,
+    });
   }
 }

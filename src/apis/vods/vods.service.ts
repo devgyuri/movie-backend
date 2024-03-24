@@ -26,4 +26,10 @@ export class VodsService {
   async createVodAll({ vodArr }: IVodsServiceCreateVodAll): Promise<void> {
     await this.vodsRepository.insert(vodArr);
   }
+
+  // createVod({ vod }: IVodsServiceCreateVod): Promise<Vod> {
+  //   return this.vodsRepository.save({
+  //     ...vod,
+  //   });
+  // }
 }

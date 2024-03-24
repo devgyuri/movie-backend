@@ -8,3 +8,7 @@ export interface IPostersServiceCreatePoster {
 export interface IPostersServiceCreatePosterAll {
   posterArr: IMoviesServiceOpenPosterInfo[];
 }
+
+// export interface IPostersServiceCreatePoster {
+//   poster: IMoviesServiceOpenPosterInfo;
+// }

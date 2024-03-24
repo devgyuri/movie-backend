@@ -7,3 +7,7 @@ export interface IActorsServiceBulkInsert {
     name: string;
   }[];
 }
+
+export interface IActorsServiceCreateActor {
+  name: string;
+}

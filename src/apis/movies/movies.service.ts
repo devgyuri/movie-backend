@@ -5,13 +5,11 @@ import { Movie } from './entities/movie.entity';
 import { Repository } from 'typeorm';
 import {
   IMoviesServiceCreateMovieAll,
-  IMoviesServiceCreateMovieOne,
+  IMoviesServiceCreateMovie,
   IMoviesServiceInsertActorsInfoArgs,
   IMoviesServiceInsertDirectorsInfoArgs,
   IMoviesServiceInsertGenresInfoArgs,
   IMoviesServiceOpenMovieInfo,
-  IMoviesServiceOpenPosterInfo,
-  IMoviesServiceOpenVodInfo,
 } from './interfaces/movies-service.interface';
 import { ActorsService } from '../actors/actors.service';
 import { DirectorsService } from '../directors/directors.service';
@@ -107,16 +105,12 @@ export class MoviesService {
     );
 
     console.log(info.data);
-    const totalCnt = 30;
+    const totalCnt = 5;
     // const totalCnt = info.data.Data[0].TotalCount;
     // console.log(totalCnt);
     const batch = 10;
 
     for (let i = 0; i <= totalCnt / batch; i++) {
-      const movieArr: IMoviesServiceOpenMovieInfo[] = [];
-      const posterArr: IMoviesServiceOpenPosterInfo[] = [];
-      const vodArr: IMoviesServiceOpenVodInfo[] = [];
-
       const result = await axios.get(
         'http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp',
         {
@@ -133,11 +127,12 @@ export class MoviesService {
           },
         },
       );
-      // console.log('i: ', i);
+      console.log('i: ', i);
 
-      const count = result.data.Data[0].Count;
+      // const count = result.data.Data[0].Count;
+      const count = 5;
       for (let j = 0; j < count; j++) {
-        // console.log('j: ', j);
+        console.log('j: ', j);
         const rawData = result.data?.Data[0].Result[j];
 
         const id = rawData.DOCID;
@@ -157,43 +152,27 @@ export class MoviesService {
         const rating = Number(rawData.rating.replace(/[^0-9]/g, ''));
         const plot = rawData.plots.plot[0].plotText;
 
-        // 1:N relationship -> FK 제약 조건
-        const posterUrls = rawData.posters.split('|');
-        posterUrls.map((el) => {
-          posterArr.push({
-            url: el ?? 'no poster',
-            movie: new Movie(id),
-          });
-        });
-        const vodUrls = rawData.vods.vod.map((el) => {
-          return el.vodUrl;
-        });
-        vodArr.push(
-          vodUrls.map((el) => {
-            return {
-              url: el ?? 'no vod',
-              movieId: id,
-            };
+        // N:M relationship
+        // const actors: Actor[] = rawData.actors.actor.map(async (el) => {
+        //   return await this.actorsService.createActor({ name: el.actorNm });
+        // });
+        const actors = await Promise.all(
+          rawData.actors.actor.map((el) => {
+            return this.actorsService.createActor({ name: el.actorNm });
           }),
         );
-        // vodUrls.map(async (el) => {
-        //   await this.vodsService.createVod({
-        //     url: el,
-        //     movieId: id,
-        //   });
-        // });
-
-        // N:M relationship
-        const actorNames = rawData.actors.actor.map((el) => {
-          return el.actorNm;
-        });
-        const actors = await this.insertActorsInfo({ actorNames });
-        const directorNames = rawData.directors.director.map((el) => {
-          return el.directorNm;
-        });
-        const directors = await this.insertDirectorsInfo({ directorNames });
-        const genreNames = rawData.genre.split(',');
-        const genres = await this.insertGenresInfo({ genreNames });
+        const directors = await Promise.all(
+          rawData.directors.director.map((el) => {
+            return this.directorsService.createDirector({
+              name: el.directorNm,
+            });
+          }),
+        );
+        const genres = await Promise.all(
+          rawData.genre.split(',').map((el) => {
+            return this.genresService.createGenre({ name: el });
+          }),
+        );
 
         const movieInfo: IMoviesServiceOpenMovieInfo = {
           id,
@@ -206,11 +185,49 @@ export class MoviesService {
           directors,
           genres,
         };
-        movieArr.push(movieInfo);
+        await this.createMovie({ data: movieInfo });
+
+        // 1:N relationship -> FK 제약 조건
+        // const tempMovie = new Movie();
+        // tempMovie.id = id;
+        // const posterUrls = rawData.posters.split('|');
+        // posterUrls.map((el) => {
+        //   posterArr.push({
+        //     url: el ?? '',
+        //     movie: tempMovie,
+        //   });
+        // });
+        const posterUrls = rawData.posters.split('|');
+        await Promise.all(
+          posterUrls.map((el) => {
+            if (el) {
+              return this.postersService.createPoster({
+                url: el,
+                movieId: id,
+              });
+            }
+          }),
+        );
+        const vodUrls = rawData.vods.vod.map((el) => {
+          return el.vodUrl;
+        });
+        await Promise.all(
+          vodUrls.map((el) => {
+            if (el) {
+              return this.vodsService.createVod({
+                url: el,
+                movieId: id,
+              });
+            }
+          }),
+        );
+        // vodUrls.map(async (el) => {
+        //   await this.vodsService.createVod({
+        //     url: el,
+        //     movieId: id,
+        //   });
+        // });
       }
-      await this.createMovieAll({ movieArr });
-      await this.postersService.createPosterAll({ posterArr });
-      await this.vodsService.createVodAll({ vodArr });
     }
 
     // const actor = {
@@ -237,11 +254,10 @@ export class MoviesService {
     return 'DB initializing completed!';
   }
 
-  async createMovieOne({ data }: IMoviesServiceCreateMovieOne): Promise<Movie> {
-    const result = await this.moviesRepository.save({
+  createMovie({ data }: IMoviesServiceCreateMovie): Promise<Movie> {
+    return this.moviesRepository.save({
       ...data,
     });
-    return result;
   }
 
   async createMovieAll({

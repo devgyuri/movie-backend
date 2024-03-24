@@ -7,3 +7,7 @@ export interface IDirectorsServiceBulkInsert {
     name: string;
   }[];
 }
+
+export interface IDirectorsServiceCreateDirector {
+  name: string;
+}

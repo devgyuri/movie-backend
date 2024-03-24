@@ -28,4 +28,8 @@ export class PostersService {
   }: IPostersServiceCreatePosterAll): Promise<void> {
     await this.postersRepository.insert(posterArr);
   }
+
+  // createPoster({ poster }: IPostersServiceCreatePoster): Promise<Poster> {
+  //   return this.postersRepository.save({ ...poster });
+  // }
 }

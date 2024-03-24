@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   IActorsServiceFindByNames,
   IActorsServiceBulkInsert,
+  IActorsServiceCreateActor,
 } from './interfaces/actors-service.interface';
 
 @Injectable()
@@ -22,5 +23,11 @@ export class ActorsService {
 
   bulkInsert({ names }: IActorsServiceBulkInsert): Promise<any> {
     return this.actorsRepository.insert(names);
+  }
+
+  createActor({ name }: IActorsServiceCreateActor): Promise<Actor> {
+    return this.actorsRepository.save({
+      name,
+    });
   }
 }

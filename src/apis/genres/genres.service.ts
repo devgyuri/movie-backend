@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Genre } from './entities/genre.entity';
 import {
   IGenresServiceBulkInsert,
+  IGenresServiceCreateGenre,
   IGenresServiceFindByNames,
 } from './interfaces/genrers-service.interface';
 
@@ -22,5 +23,11 @@ export class GenresService {
 
   bulkInsert({ names }: IGenresServiceBulkInsert): Promise<any> {
     return this.genresRepository.insert(names);
+  }
+
+  createGenre({ name }: IGenresServiceCreateGenre): Promise<Genre> {
+    return this.genresRepository.save({
+      name,
+    });
   }
 }
