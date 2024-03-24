@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { In, InsertResult, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Actor } from './entities/actor.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -20,7 +20,7 @@ export class ActorsService {
     });
   }
 
-  bulkInsert({ names }: IActorsServiceBulkInsert): Promise<InsertResult> {
+  bulkInsert({ names }: IActorsServiceBulkInsert): Promise<any> {
     return this.actorsRepository.insert(names);
   }
 }

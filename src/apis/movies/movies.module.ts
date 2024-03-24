@@ -9,6 +9,10 @@ import { DirectorsService } from '../directors/directors.service';
 import { GenresService } from '../genres/genres.service';
 import { Director } from '../directors/entities/director.entity';
 import { Genre } from '../genres/entities/genre.entity';
+import { PostersService } from '../posters/posters.service';
+import { VodsService } from '../vods/vods.service';
+import { Poster } from '../posters/entities/poster.entity';
+import { Vod } from '../vods/entities/vod.entity';
 
 @Module({
   imports: [
@@ -16,6 +20,8 @@ import { Genre } from '../genres/entities/genre.entity';
       Actor,
       Director,
       Genre,
+      Poster,
+      Vod,
       Movie, //
     ]),
   ],
@@ -23,6 +29,8 @@ import { Genre } from '../genres/entities/genre.entity';
     ActorsService,
     DirectorsService,
     GenresService,
+    PostersService,
+    VodsService,
     MoviesResolver, //
     MoviesService,
   ],

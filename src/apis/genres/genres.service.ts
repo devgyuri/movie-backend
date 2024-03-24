@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { In, InsertResult, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Genre } from './entities/genre.entity';
 import {
@@ -20,7 +20,7 @@ export class GenresService {
     });
   }
 
-  bulkInsert({ names }: IGenresServiceBulkInsert): Promise<InsertResult> {
+  bulkInsert({ names }: IGenresServiceBulkInsert): Promise<any> {
     return this.genresRepository.insert(names);
   }
 }

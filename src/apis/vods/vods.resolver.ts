@@ -1,5 +1,5 @@
 import { Query, Resolver } from '@nestjs/graphql';
-import { VodsService } from './posters.service';
+import { VodsService } from './vods.service';
 
 @Resolver()
 export class VodsResolver {

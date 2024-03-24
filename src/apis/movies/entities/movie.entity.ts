@@ -8,6 +8,10 @@ import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 @Entity()
 @ObjectType()
 export class Movie {
+  constructor(newId: string) {
+    this.id = newId;
+  }
+
   @PrimaryColumn({ type: 'varchar', length: 10 })
   @Field(() => String)
   id: string;

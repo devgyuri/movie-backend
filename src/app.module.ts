@@ -6,7 +6,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { MoviesModule } from './apis/movies/movies.module';
 import { ActorsModule } from './apis/actors/actors.module';
 import { PostersModule } from './apis/posters/posters.module';
-import { VodsModule } from './apis/vods/posters.module';
+import { VodsModule } from './apis/vods/vods.module';
 import { DirectorsModule } from './apis/directors/directors.module';
 import { GenresModule } from './apis/genres/genres.module';
 
