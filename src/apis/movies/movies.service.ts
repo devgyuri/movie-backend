@@ -16,6 +16,9 @@ import { DirectorsService } from '../directors/directors.service';
 import { GenresService } from '../genres/genres.service';
 import { PostersService } from '../posters/posters.service';
 import { VodsService } from '../vods/vods.service';
+import { Actor } from '../actors/entities/actor.entity';
+import { Director } from '../directors/entities/director.entity';
+import { Genre } from '../genres/entities/genre.entity';
 
 @Injectable()
 export class MoviesService {
@@ -29,65 +32,77 @@ export class MoviesService {
     private readonly vodsService: VodsService,
   ) {}
 
-  async insertActorsInfo({ actorNames }: IMoviesServiceInsertActorsInfoArgs) {
+  async insertActorsInfo({
+    actorNames,
+  }: IMoviesServiceInsertActorsInfoArgs): Promise<Actor[]> {
     // actorNames = ['김수현', '김고은', '이도현'];
     const prevActors = await this.actorsService.findByNames({ actorNames });
 
-    const temp = [];
+    const missingActorNames: string[] = [];
     actorNames.forEach((el) => {
       const isExists = prevActors.find((prevEl) => el === prevEl.name);
       if (!isExists) {
-        temp.push({ name: el });
+        missingActorNames.push(el);
       }
     });
 
-    const newActors = await this.actorsService.bulkInsert({ names: temp });
+    const newActors = await Promise.all(
+      missingActorNames.map((el) => {
+        return this.actorsService.createActor({ name: el });
+      }),
+    );
 
-    return [...prevActors, ...newActors.identifiers];
+    return [...prevActors, ...newActors];
   }
 
   async insertDirectorsInfo({
     directorNames,
-  }: IMoviesServiceInsertDirectorsInfoArgs) {
+  }: IMoviesServiceInsertDirectorsInfoArgs): Promise<Director[]> {
     // directorNames = ['봉준호', '김철수'];
     const prevDirectors = await this.directorsService.findByNames({
       directorNames,
     });
 
-    const temp = [];
+    const missingDirectorNames: string[] = [];
     directorNames.forEach((el) => {
       const isExists = prevDirectors.find((prevEl) => el === prevEl.name);
       if (!isExists) {
-        temp.push({ name: el });
+        missingDirectorNames.push(el);
       }
     });
 
-    const newDirectors = await this.directorsService.bulkInsert({
-      names: temp,
-    });
+    const newDirectors = await Promise.all(
+      missingDirectorNames.map((el) => {
+        return this.directorsService.createDirector({ name: el });
+      }),
+    );
 
-    return [...prevDirectors, ...newDirectors.identifiers];
+    return [...prevDirectors, ...newDirectors];
   }
 
-  async insertGenresInfo({ genreNames }: IMoviesServiceInsertGenresInfoArgs) {
+  async insertGenresInfo({
+    genreNames,
+  }: IMoviesServiceInsertGenresInfoArgs): Promise<Genre[]> {
     // genreNames = ['SF', '스릴라'];
     const prevGenres = await this.genresService.findByNames({
       genreNames,
     });
 
-    const temp = [];
+    const missingGenreNames: string[] = [];
     genreNames.forEach((el) => {
       const isExists = prevGenres.find((prevEl) => el === prevEl.name);
       if (!isExists) {
-        temp.push({ name: el });
+        missingGenreNames.push(el);
       }
     });
 
-    const newGenres = await this.genresService.bulkInsert({
-      names: temp,
-    });
+    const newGenres = await Promise.all(
+      missingGenreNames.map((el) => {
+        return this.genresService.createGenre({ name: el });
+      }),
+    );
 
-    return [...prevGenres, ...newGenres.identifiers];
+    return [...prevGenres, ...newGenres];
   }
 
   async getOpenMovieInfo(): Promise<string> {
@@ -105,9 +120,8 @@ export class MoviesService {
     );
 
     console.log(info.data);
-    const totalCnt = 5;
-    // const totalCnt = info.data.Data[0].TotalCount;
-    // console.log(totalCnt);
+    // const totalCnt = 5;
+    const totalCnt = info.data.Data[0].TotalCount;
     const batch = 10;
 
     for (let i = 0; i <= totalCnt / batch; i++) {
@@ -117,22 +131,22 @@ export class MoviesService {
           params: {
             collection: 'kmdb_new2',
             ServiceKey: process.env.KMDB_API_KEY,
-            releaseDts: '20190101',
-            releaseDte: '20191231',
-            // releaseDts: '20200101',
-            // releaseDte: '20241231',
+            // releaseDts: '20190101',
+            // releaseDte: '20191231',
+            releaseDts: '20200101',
+            releaseDte: '20241231',
             sort: 'prodYear,1',
             listCount: batch,
             startCount: i * batch,
           },
         },
       );
-      console.log('i: ', i);
+      // console.log('i: ', i);
 
-      // const count = result.data.Data[0].Count;
-      const count = 5;
+      const count = result.data.Data[0].Count;
+      // const count = 5;
       for (let j = 0; j < count; j++) {
-        console.log('j: ', j);
+        // console.log('j: ', j);
         const rawData = result.data?.Data[0].Result[j];
 
         const id = rawData.DOCID;
@@ -153,27 +167,20 @@ export class MoviesService {
         const plot = rawData.plots.plot[0].plotText;
 
         // N:M relationship
-        // const actors: Actor[] = rawData.actors.actor.map(async (el) => {
-        //   return await this.actorsService.createActor({ name: el.actorNm });
-        // });
-        const actors = await Promise.all(
-          rawData.actors.actor.map((el) => {
-            return this.actorsService.createActor({ name: el.actorNm });
-          }),
-        );
-        const directors = await Promise.all(
-          rawData.directors.director.map((el) => {
-            return this.directorsService.createDirector({
-              name: el.directorNm,
-            });
-          }),
-        );
-        const genres = await Promise.all(
-          rawData.genre.split(',').map((el) => {
-            return this.genresService.createGenre({ name: el });
-          }),
-        );
+        const actorNames = rawData.actors.actor.map((el) => {
+          return el.actorNm;
+        });
+        const actors = await this.insertActorsInfo({ actorNames });
 
+        const directorNames = rawData.directors.director.map((el) => {
+          return el.directorNm;
+        });
+        const directors = await this.insertDirectorsInfo({ directorNames });
+
+        const genreNames = rawData.genre.split(',');
+        const genres = await this.insertGenresInfo({ genreNames });
+
+        // movie table
         const movieInfo: IMoviesServiceOpenMovieInfo = {
           id,
           title,
@@ -187,16 +194,7 @@ export class MoviesService {
         };
         await this.createMovie({ data: movieInfo });
 
-        // 1:N relationship -> FK 제약 조건
-        // const tempMovie = new Movie();
-        // tempMovie.id = id;
-        // const posterUrls = rawData.posters.split('|');
-        // posterUrls.map((el) => {
-        //   posterArr.push({
-        //     url: el ?? '',
-        //     movie: tempMovie,
-        //   });
-        // });
+        // 1:N relationship
         const posterUrls = rawData.posters.split('|');
         await Promise.all(
           posterUrls.map((el) => {
@@ -221,35 +219,8 @@ export class MoviesService {
             }
           }),
         );
-        // vodUrls.map(async (el) => {
-        //   await this.vodsService.createVod({
-        //     url: el,
-        //     movieId: id,
-        //   });
-        // });
       }
     }
-
-    // const actor = {
-    //   name: '김수현',
-    //   movieId: 'K28771',
-    // };
-    // await this.actorsService.createActor(actor);
-    // return 'DB initializing completed!';
-
-    // const actorNames = ['김고은', '이도현', '박보영'];
-    // const actors = await this.insertActorsInfo({ actorNames });
-
-    // const result2 = await this.moviesRepository.save({
-    //   id: 'AAAA2',
-    //   title: 'hello',
-    //   open_dt: new Date(),
-    //   audi_acc: 100,
-    //   rating: 100,
-    //   plot: 'test text',
-    //   actors,
-    // });
-    // console.log(result2);
 
     return 'DB initializing completed!';
   }

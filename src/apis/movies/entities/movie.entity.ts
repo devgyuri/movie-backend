@@ -45,17 +45,19 @@ export class Movie {
   boxOffice: BoxOffice[];
 
   @JoinTable()
-  @ManyToMany(() => Genre, (genres) => genres.movies)
+  @ManyToMany(() => Genre, (genres) => genres.movies, { cascade: true })
   @Field(() => [Genre])
   genres: Genre[];
 
   @JoinTable()
-  @ManyToMany(() => Actor, (actors) => actors.movies)
+  @ManyToMany(() => Actor, (actors) => actors.movies, { cascade: true })
   @Field(() => [Actor])
   actors: Actor[];
 
   @JoinTable()
-  @ManyToMany(() => Director, (directors) => directors.movies)
+  @ManyToMany(() => Director, (directors) => directors.movies, {
+    cascade: true,
+  })
   @Field(() => [Director])
   directors: Director[];
 }

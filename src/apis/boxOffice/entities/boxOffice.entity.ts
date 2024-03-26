@@ -20,7 +20,7 @@ export class BoxOffice {
   date: Date;
 
   @JoinTable()
-  @ManyToMany(() => Movie, (movies) => movies.boxOffice)
+  @ManyToMany(() => Movie, (movies) => movies.boxOffice, { cascade: true })
   @Field(() => [Movie])
   movies: Movie[];
 }
