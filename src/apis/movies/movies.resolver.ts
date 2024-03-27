@@ -7,7 +7,7 @@ export class MoviesResolver {
 
   @Mutation(() => String)
   initializeTable(): Promise<string> {
-    return this.moviesService.getOpenMovieInfo();
+    return this.moviesService.createOpenMovieInfoAll();
   }
 
   @Query(() => String)

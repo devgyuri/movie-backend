@@ -48,6 +48,7 @@ type Movie {
 
 type Query {
   fetchActor: String!
+  fetchBoxOffice(date: String!): [Movie!]!
   fetchTemp: String!
   fetchPoster: String!
   fetchVod: String!

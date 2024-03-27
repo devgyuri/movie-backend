@@ -4,6 +4,7 @@ import { Genre } from 'src/apis/genres/entities/genre.entity';
 import { Director } from 'src/apis/directors/entities/director.entity';
 import { Poster } from 'src/apis/posters/entities/poster.entity';
 import { Vod } from 'src/apis/vods/entities/vod.entity';
+import { IMovie } from 'src/commons/types/movieDetail.types';
 
 type RequiredBy<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
 
@@ -43,3 +44,21 @@ export interface IMoviesServiceInsertGenresInfoArgs {
 }
 
 export type IMoviesServiceInsertGenresInfo = Promise<RequiredBy<Genre, 'id'>[]>;
+
+export interface IMoviesServiceCreateOpenMovieInfo {
+  rawData: IMovie;
+}
+
+export interface IMoviesServiceCreateMovieByTitleAndRlsDt {
+  title: string;
+  releaseDate: string;
+}
+
+export interface IMoviesServiceFindMovieByTitleAndRlsDt {
+  title: string;
+  releaseDate: string;
+}
+
+export interface IMoviesServiceFindMovieById {
+  id: string;
+}

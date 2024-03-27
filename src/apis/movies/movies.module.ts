@@ -34,5 +34,8 @@ import { Vod } from '../vods/entities/vod.entity';
     MoviesResolver, //
     MoviesService,
   ],
+  exports: [
+    MoviesService, //
+  ],
 })
 export class MoviesModule {}

@@ -10,6 +10,10 @@ import {
   IMoviesServiceInsertDirectorsInfoArgs,
   IMoviesServiceInsertGenresInfoArgs,
   IMoviesServiceOpenMovieInfo,
+  IMoviesServiceCreateOpenMovieInfo,
+  IMoviesServiceCreateMovieByTitleAndRlsDt,
+  IMoviesServiceFindMovieByTitleAndRlsDt,
+  IMoviesServiceFindMovieById,
 } from './interfaces/movies-service.interface';
 import { ActorsService } from '../actors/actors.service';
 import { DirectorsService } from '../directors/directors.service';
@@ -19,6 +23,8 @@ import { VodsService } from '../vods/vods.service';
 import { Actor } from '../actors/entities/actor.entity';
 import { Director } from '../directors/entities/director.entity';
 import { Genre } from '../genres/entities/genre.entity';
+import { IMovie } from 'src/commons/types/movieDetail.types';
+import { stringToDate } from 'src/commons/libraries/date';
 
 @Injectable()
 export class MoviesService {
@@ -105,7 +111,145 @@ export class MoviesService {
     return [...prevGenres, ...newGenres];
   }
 
-  async getOpenMovieInfo(): Promise<string> {
+  async findMovieById({ id }: IMoviesServiceFindMovieById): Promise<Movie> {
+    return this.moviesRepository.findOne({
+      where: { id },
+      relations: {
+        actors: true,
+        directors: true,
+        genres: true,
+      },
+    });
+  }
+
+  async findMovieByTitleAndRlsDt({
+    title,
+    releaseDate,
+  }: IMoviesServiceFindMovieByTitleAndRlsDt): Promise<Movie> {
+    console.log('movie - findByTitle');
+    console.log('releaseDate: ', releaseDate);
+
+    const result = await this.moviesRepository.findOne({
+      where: { title, open_dt: stringToDate(releaseDate) },
+      relations: {
+        actors: true,
+        directors: true,
+        genres: true,
+      },
+    });
+
+    if (result) {
+      return result;
+    }
+
+    const temp = new Movie();
+    temp.title = title;
+    temp.open_dt = stringToDate(releaseDate);
+    return temp;
+    // return this.createMovieByTitleAndRlsDt({ title, releaseDate });
+  }
+
+  async createMovieByTitleAndRlsDt({
+    title,
+    releaseDate,
+  }: IMoviesServiceCreateMovieByTitleAndRlsDt): Promise<Movie> {
+    const result = await axios.get(
+      'http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp',
+      {
+        params: {
+          collection: 'kmdb_new2',
+          ServiceKey: process.env.KMDB_API_KEY,
+          title: title,
+          releaseDts: releaseDate,
+          releaseDte: releaseDate,
+        },
+      },
+    );
+
+    console.log('========');
+    console.log('title: ', title, ' releaseDate: ', releaseDate);
+    console.log(result.data);
+    console.log('========');
+
+    return this.createOpenMovieInfo({
+      rawData: result.data?.Data[0].Result[0],
+    });
+  }
+
+  async createOpenMovieInfo({
+    rawData,
+  }: IMoviesServiceCreateOpenMovieInfo): Promise<Movie> {
+    const id = rawData.DOCID;
+    const title = rawData.title
+      .replaceAll('!HS', '')
+      .replaceAll('!HE', '')
+      .replace(/ +/g, ' ')
+      .trim();
+    const dt =
+      rawData.repRlsDate.length > 0 ? rawData.repRlsDate : rawData.regDate;
+    const open_dt = stringToDate(dt);
+    const audi_acc = Number(rawData.audiAcc ?? 0);
+    const rating = Number(rawData.rating.replace(/[^0-9]/g, ''));
+    const plot = rawData.plots.plot[0].plotText;
+
+    // N:M relationship
+    const actorNames = rawData.actors.actor.map((el) => {
+      return el.actorNm;
+    });
+    const actors = await this.insertActorsInfo({ actorNames });
+
+    const directorNames = rawData.directors.director.map((el) => {
+      return el.directorNm;
+    });
+    const directors = await this.insertDirectorsInfo({ directorNames });
+
+    const genreNames = rawData.genre.split(',');
+    const genres = await this.insertGenresInfo({ genreNames });
+
+    // movie table
+    const movieInfo: IMoviesServiceOpenMovieInfo = {
+      id,
+      title,
+      open_dt,
+      audi_acc,
+      rating,
+      plot,
+      actors,
+      directors,
+      genres,
+    };
+    const movieResult = await this.createMovie({ data: movieInfo });
+
+    // 1:N relationship
+    const posterUrls = rawData.posters.split('|');
+    await Promise.all(
+      posterUrls.map((el) => {
+        if (el) {
+          return this.postersService.createPoster({
+            url: el,
+            movieId: id,
+          });
+        }
+      }),
+    );
+    const vodUrls = rawData.vods.vod.map((el) => {
+      return el.vodUrl;
+    });
+    await Promise.all(
+      vodUrls.map((el) => {
+        if (el) {
+          return this.vodsService.createVod({
+            url: el,
+            movieId: id,
+          });
+        }
+      }),
+    );
+
+    return movieResult;
+  }
+
+  async createOpenMovieInfoAll(): Promise<string> {
     const info = await axios.get(
       'http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp',
       {
@@ -118,8 +262,6 @@ export class MoviesService {
         },
       },
     );
-
-    console.log(info.data);
     // const totalCnt = 5;
     const totalCnt = info.data.Data[0].TotalCount;
     const batch = 10;
@@ -147,78 +289,9 @@ export class MoviesService {
       // const count = 5;
       for (let j = 0; j < count; j++) {
         // console.log('j: ', j);
-        const rawData = result.data?.Data[0].Result[j];
+        const rawData: IMovie = result.data?.Data[0].Result[j];
 
-        const id = rawData.DOCID;
-        const title = rawData.title
-          .replaceAll('!HS', '')
-          .replaceAll('!HE', '')
-          .replace(/ +/g, ' ')
-          .trim();
-        const dt =
-          rawData.repRlsDate.length > 0 ? rawData.repRlsDate : rawData.regDate;
-        const open_dt = new Date(
-          Number(dt.substr(0, 4)),
-          Number(dt.substr(4, 2)) - 1,
-          Number(dt.substr(6, 2)),
-        );
-        const audi_acc = Number(rawData.audiAcc ?? 0);
-        const rating = Number(rawData.rating.replace(/[^0-9]/g, ''));
-        const plot = rawData.plots.plot[0].plotText;
-
-        // N:M relationship
-        const actorNames = rawData.actors.actor.map((el) => {
-          return el.actorNm;
-        });
-        const actors = await this.insertActorsInfo({ actorNames });
-
-        const directorNames = rawData.directors.director.map((el) => {
-          return el.directorNm;
-        });
-        const directors = await this.insertDirectorsInfo({ directorNames });
-
-        const genreNames = rawData.genre.split(',');
-        const genres = await this.insertGenresInfo({ genreNames });
-
-        // movie table
-        const movieInfo: IMoviesServiceOpenMovieInfo = {
-          id,
-          title,
-          open_dt,
-          audi_acc,
-          rating,
-          plot,
-          actors,
-          directors,
-          genres,
-        };
-        await this.createMovie({ data: movieInfo });
-
-        // 1:N relationship
-        const posterUrls = rawData.posters.split('|');
-        await Promise.all(
-          posterUrls.map((el) => {
-            if (el) {
-              return this.postersService.createPoster({
-                url: el,
-                movieId: id,
-              });
-            }
-          }),
-        );
-        const vodUrls = rawData.vods.vod.map((el) => {
-          return el.vodUrl;
-        });
-        await Promise.all(
-          vodUrls.map((el) => {
-            if (el) {
-              return this.vodsService.createVod({
-                url: el,
-                movieId: id,
-              });
-            }
-          }),
-        );
+        this.createOpenMovieInfo({ rawData });
       }
     }
 
