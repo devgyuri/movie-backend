@@ -1,12 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Movie } from 'src/apis/movies/entities/movie.entity';
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BoxOfficeToMovie } from 'src/apis/boxOfficeToMovie/entities/boxOfficeToMovie.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
@@ -19,8 +13,11 @@ export class BoxOffice {
   @Field(() => Date)
   date: Date;
 
-  @JoinTable()
-  @ManyToMany(() => Movie, (movies) => movies.boxOffice, { cascade: true })
-  @Field(() => [Movie])
-  movies: Movie[];
+  @OneToMany(
+    () => BoxOfficeToMovie,
+    (boxOfficeToMovie) => boxOfficeToMovie.movie,
+    { eager: true },
+  )
+  @Field(() => [BoxOfficeToMovie])
+  boxOfficeToMovies: BoxOfficeToMovie[];
 }

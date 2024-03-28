@@ -18,7 +18,7 @@ export interface IMoviesServiceCreateMovieAll {
 
 export type IMoviesServiceOpenMovieInfo = Omit<
   Movie,
-  'avg_star' | 'cnt_star' | 'boxOffice'
+  'avg_star' | 'cnt_star' | 'boxOfficeToMovies'
 >;
 
 export type IMoviesServiceOpenPosterInfo = Omit<Poster, 'id'>;

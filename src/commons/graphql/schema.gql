@@ -11,13 +11,20 @@ type Actor {
 type BoxOffice {
   id: Int!
   date: DateTime!
-  movies: [Movie!]!
+  boxOfficeToMovies: [BoxOfficeToMovie!]!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type BoxOfficeToMovie {
+  id: Int!
+  boxOffice: BoxOffice!
+  movie: Movie!
+  rank: Int!
+}
 
 type Director {
   id: Int!
@@ -40,7 +47,7 @@ type Movie {
   cnt_star: Int!
   rating: Int!
   plot: String!
-  boxOffice: [BoxOffice!]!
+  boxOfficeToMovies: [BoxOfficeToMovie!]!
   genres: [Genre!]!
   actors: [Actor!]!
   directors: [Director!]!
@@ -48,7 +55,7 @@ type Movie {
 
 type Query {
   fetchActor: String!
-  fetchBoxOffice(date: String!): [Movie!]!
+  fetchBoxOffice(date: String!): String!
   fetchTemp: String!
   fetchPoster: String!
   fetchVod: String!

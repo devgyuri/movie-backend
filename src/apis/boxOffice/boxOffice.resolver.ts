@@ -6,8 +6,8 @@ import { Movie } from '../movies/entities/movie.entity';
 export class BoxOfficeResolver {
   constructor(private readonly boxOfficeService: BoxOfficeService) {}
 
-  @Query(() => [Movie])
-  fetchBoxOffice(@Args('date') date: string): Promise<Movie[]> {
+  @Query(() => String)
+  fetchBoxOffice(@Args('date') date: string): Promise<string> {
     return this.boxOfficeService.getBoxOfficeMovies({ dateString: date });
   }
 }

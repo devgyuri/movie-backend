@@ -7,7 +7,7 @@ import {
   IBoxOfficeServiceCreateBoxOffice,
   IBoxOfficeServiceFindByDate,
   IBoxOfficeServiceGetBoxOfficeMovies,
-} from './interfaces/bosOffice-service.interface';
+} from './interfaces/boxOffice-service.interface';
 import { stringToDate } from 'src/commons/libraries/date';
 import { MoviesService } from '../movies/movies.service';
 import axios from 'axios';
@@ -26,26 +26,28 @@ export class BoxOfficeService {
   }: IBoxOfficeServiceFindByDate): Promise<BoxOffice> {
     const result = await this.boxOfficeRepository.findOne({
       where: { date: stringToDate(dateString) },
-      relations: {
-        movies: true,
-      },
+      relations: { boxOfficeToMovies: true },
     });
 
-    if (result) {
-      return result;
-    }
-    return this.createBoxOffice({ dateString });
+    console.log(result);
+    return result;
+
+    // if (result) {
+    //   return result;
+    // }
+    // return this.createBoxOffice({ dateString });
   }
 
   async getBoxOfficeMovies({
     dateString,
-  }: IBoxOfficeServiceGetBoxOfficeMovies): Promise<Movie[]> {
+  }: IBoxOfficeServiceGetBoxOfficeMovies): Promise<string> {
     const boxOfficeResult = await this.findByDate({ dateString });
-    return Promise.all(
-      boxOfficeResult.movies.map((el) => {
-        return this.moviesService.findMovieById({ id: el.id });
-      }),
-    );
+    return 'getBoxOfficeMovies';
+    // return Promise.all(
+    //   boxOfficeResult.movies.map((el) => {
+    //     return this.moviesService.findMovieById({ id: el.id });
+    //   }),
+    // );
   }
 
   async createBoxOffice({
@@ -73,10 +75,11 @@ export class BoxOfficeService {
         });
       }),
     );
+    console.log(movies);
 
     const boxOfficeInfo = new BoxOffice();
     boxOfficeInfo.date = stringToDate(dateString);
-    boxOfficeInfo.movies = movies;
+    // boxOfficeInfo.movies = movies;
     // return boxOfficeInfo;
     return this.boxOfficeRepository.save(boxOfficeInfo);
   }
