@@ -22,25 +22,21 @@ export class BoxOfficeService {
     private readonly moviesService: MoviesService,
   ) {}
 
-  async findByDate({
-    dateString,
-  }: IBoxOfficeServiceFindByDate): Promise<BoxOffice[]> {
-    // const result = await this.boxOfficeRepository.findOne({
-    //   where: { date: stringToDate(dateString) },
-    //   relations: { boxOfficeToMovies: true },
-    // });
-    const result = await this.boxOfficeRepository
+  async findByDate({ dateString }: IBoxOfficeServiceFindByDate): Promise<any> {
+    const result = await this.boxOfficeRepository.findOne({
+      where: { date: stringToDate(dateString) },
+      relations: { boxOfficeToMovies: true },
+    });
+
+    const result2 = await this.boxOfficeRepository
       .createQueryBuilder('boxOffice')
-      .leftJoinAndSelect(
-        BoxOfficeToMovie,
-        'boxOfficeToMovie',
-        'boxOfficeToMovie.boxOfficeId = boxOffice.id',
-      )
+      .leftJoinAndSelect('boxOffice.boxOfficeToMovies', 'boxOfficeToMovie')
+      .leftJoinAndSelect('boxOfficeToMovie.movie', 'movie')
       .where('boxOffice.date = :date', { date: stringToDate(dateString) })
       .getMany();
 
-    console.log(result);
-    return result;
+    // console.log(result);
+    return result2;
 
     // if (result) {
     //   return result;
@@ -52,11 +48,9 @@ export class BoxOfficeService {
     dateString,
   }: IBoxOfficeServiceGetBoxOfficeMovies): Promise<string> {
     const boxOfficeResult = await this.findByDate({ dateString });
-    console.log(boxOfficeResult[0]);
+    console.log(boxOfficeResult);
+    console.log(boxOfficeResult[0].boxOfficeToMovies[0]);
     return 'getBoxOfficeMovies';
-
-    return 'hello world';
-
     // return Promise.all(
     //   boxOfficeResult.movies.map((el) => {
     //     return this.moviesService.findMovieById({ id: el.id });

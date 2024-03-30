@@ -15,7 +15,7 @@ export class BoxOffice {
 
   @OneToMany(
     () => BoxOfficeToMovie,
-    (boxOfficeToMovie) => boxOfficeToMovie.movie,
+    (boxOfficeToMovie) => boxOfficeToMovie.boxOffice,
     { eager: true },
   )
   @Field(() => [BoxOfficeToMovie])

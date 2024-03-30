@@ -49,7 +49,7 @@ export class Movie {
 
   @OneToMany(
     () => BoxOfficeToMovie,
-    (boxOfficeToMovie) => boxOfficeToMovie.boxOffice,
+    (boxOfficeToMovie) => boxOfficeToMovie.movie,
   )
   @Field(() => [BoxOfficeToMovie])
   boxOfficeToMovies: BoxOfficeToMovie[];
