@@ -62,7 +62,10 @@ export class Movie {
   genres: Genre[];
 
   @JoinTable()
-  @ManyToMany(() => Actor, (actors) => actors.movies, { cascade: true })
+  @ManyToMany(() => Actor, (actors) => actors.movies, {
+    cascade: true,
+    eager: true,
+  })
   @Field(() => [Actor])
   actors: Actor[];
 

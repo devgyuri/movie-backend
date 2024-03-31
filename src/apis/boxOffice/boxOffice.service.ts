@@ -12,7 +12,6 @@ import { stringToDate } from 'src/commons/libraries/date';
 import { MoviesService } from '../movies/movies.service';
 import axios from 'axios';
 import { IBoxOfficeList } from 'src/commons/types/bosOffice.types';
-import { BoxOfficeToMovie } from '../boxOfficeToMovie/entities/boxOfficeToMovie.entity';
 
 @Injectable()
 export class BoxOfficeService {
@@ -23,10 +22,10 @@ export class BoxOfficeService {
   ) {}
 
   async findByDate({ dateString }: IBoxOfficeServiceFindByDate): Promise<any> {
-    const result = await this.boxOfficeRepository.findOne({
-      where: { date: stringToDate(dateString) },
-      relations: { boxOfficeToMovies: true },
-    });
+    // const result = await this.boxOfficeRepository.findOne({
+    //   where: { date: stringToDate(dateString) },
+    //   relations: { boxOfficeToMovies: true },
+    // });
 
     const result2 = await this.boxOfficeRepository
       .createQueryBuilder('boxOffice')
@@ -46,11 +45,16 @@ export class BoxOfficeService {
 
   async getBoxOfficeMovies({
     dateString,
-  }: IBoxOfficeServiceGetBoxOfficeMovies): Promise<string> {
+  }: IBoxOfficeServiceGetBoxOfficeMovies): Promise<Movie[]> {
     const boxOfficeResult = await this.findByDate({ dateString });
     console.log(boxOfficeResult);
     console.log(boxOfficeResult[0].boxOfficeToMovies[0]);
-    return 'getBoxOfficeMovies';
+
+    const movies = boxOfficeResult[0].boxOfficeToMovies.map((el) => {
+      return el.movie;
+    });
+
+    return movies;
     // return Promise.all(
     //   boxOfficeResult.movies.map((el) => {
     //     return this.moviesService.findMovieById({ id: el.id });
