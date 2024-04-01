@@ -10,11 +10,13 @@ import { VodsModule } from './apis/vods/vods.module';
 import { DirectorsModule } from './apis/directors/directors.module';
 import { GenresModule } from './apis/genres/genres.module';
 import { BoxOfficeModule } from './apis/boxOffice/boxOffice.module';
+import { BoxOfficeToMovieModule } from './apis/boxOfficeToMovie/boxOfficeToMovie.module';
 
 @Module({
   imports: [
     ActorsModule,
     BoxOfficeModule,
+    BoxOfficeToMovieModule,
     DirectorsModule,
     GenresModule,
     MoviesModule,

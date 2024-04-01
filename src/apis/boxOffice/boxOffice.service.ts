@@ -12,6 +12,7 @@ import { stringToDate } from 'src/commons/libraries/date';
 import { MoviesService } from '../movies/movies.service';
 import axios from 'axios';
 import { IBoxOfficeList } from 'src/commons/types/bosOffice.types';
+import { BoxOfficeToMovieService } from '../boxOfficeToMovie/boxOfficeToMovie.service';
 
 @Injectable()
 export class BoxOfficeService {
@@ -19,52 +20,41 @@ export class BoxOfficeService {
     @InjectRepository(BoxOffice)
     private readonly boxOfficeRepository: Repository<BoxOffice>,
     private readonly moviesService: MoviesService,
+    private readonly boxOfficeToMovieService: BoxOfficeToMovieService,
   ) {}
 
-  async findByDate({ dateString }: IBoxOfficeServiceFindByDate): Promise<any> {
-    // const result = await this.boxOfficeRepository.findOne({
-    //   where: { date: stringToDate(dateString) },
-    //   relations: { boxOfficeToMovies: true },
-    // });
+  async findByDate({
+    dateString,
+  }: IBoxOfficeServiceFindByDate): Promise<BoxOffice> {
+    const result = await this.boxOfficeRepository.findOne({
+      where: { date: stringToDate(dateString) },
+      relations: { boxOfficeToMovies: true },
+    });
 
-    const result2 = await this.boxOfficeRepository
-      .createQueryBuilder('boxOffice')
-      .leftJoinAndSelect('boxOffice.boxOfficeToMovies', 'boxOfficeToMovie')
-      .leftJoinAndSelect('boxOfficeToMovie.movie', 'movie')
-      .where('boxOffice.date = :date', { date: stringToDate(dateString) })
-      .getMany();
-
-    // console.log(result);
-    return result2;
-
-    // if (result) {
-    //   return result;
-    // }
-    // return this.createBoxOffice({ dateString });
+    return result;
   }
 
   async getBoxOfficeMovies({
     dateString,
   }: IBoxOfficeServiceGetBoxOfficeMovies): Promise<Movie[]> {
-    const boxOfficeResult = await this.findByDate({ dateString });
+    let boxOfficeResult = await this.findByDate({ dateString });
     console.log(boxOfficeResult);
-    console.log(boxOfficeResult[0].boxOfficeToMovies[0]);
 
-    const movies = boxOfficeResult[0].boxOfficeToMovies.map((el) => {
+    if (!boxOfficeResult) {
+      await this.createBoxOffice({ dateString });
+      boxOfficeResult = await this.findByDate({ dateString });
+    }
+
+    const moviesResult = boxOfficeResult.boxOfficeToMovies.map((el) => {
       return el.movie;
     });
 
-    return movies;
-    // return Promise.all(
-    //   boxOfficeResult.movies.map((el) => {
-    //     return this.moviesService.findMovieById({ id: el.id });
-    //   }),
-    // );
+    return moviesResult;
   }
 
   async createBoxOffice({
     dateString,
-  }: IBoxOfficeServiceCreateBoxOffice): Promise<BoxOffice> {
+  }: IBoxOfficeServiceCreateBoxOffice): Promise<void> {
     const result = await axios.get(
       'http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json',
       {
@@ -78,21 +68,25 @@ export class BoxOfficeService {
     const boxOfficeList: IBoxOfficeList[] =
       result.data?.boxOfficeResult.dailyBoxOfficeList;
 
+    const boxOffice = new BoxOffice();
+    boxOffice.date = stringToDate(dateString);
+    await this.boxOfficeRepository.save(boxOffice);
+
     // openDt: yyyy-mm-dd
-    const movies = await Promise.all(
-      boxOfficeList.map((el) => {
-        return this.moviesService.findMovieByTitleAndRlsDt({
+    await Promise.all(
+      boxOfficeList.map(async (el, index) => {
+        const movie = await this.moviesService.findMovieByTitleAndRlsDt({
           title: el.movieNm,
           releaseDate: el.openDt.replaceAll('-', ''),
         });
+        console.log(movie);
+
+        await this.boxOfficeToMovieService.createBoxOfficeToMovie({
+          boxOffice,
+          movie,
+          rank: index + 1,
+        });
       }),
     );
-    console.log(movies);
-
-    const boxOfficeInfo = new BoxOffice();
-    boxOfficeInfo.date = stringToDate(dateString);
-    // boxOfficeInfo.movies = movies;
-    // return boxOfficeInfo;
-    return this.boxOfficeRepository.save(boxOfficeInfo);
   }
 }

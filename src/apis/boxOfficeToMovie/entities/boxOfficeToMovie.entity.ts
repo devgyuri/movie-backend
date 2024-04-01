@@ -14,7 +14,7 @@ export class BoxOfficeToMovie {
   @Field(() => BoxOffice)
   boxOffice: BoxOffice;
 
-  @ManyToOne(() => Movie, (movie) => movie.boxOfficeToMovies)
+  @ManyToOne(() => Movie, (movie) => movie.boxOfficeToMovies, { eager: true })
   @Field(() => Movie)
   movie: Movie;
 

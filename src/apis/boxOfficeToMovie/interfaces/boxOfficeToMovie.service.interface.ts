@@ -1,11 +1,8 @@
-export interface IBoxOfficeToMovieServiceFindByDate {
-  dateString: string;
-}
+import { BoxOffice } from 'src/apis/boxOffice/entities/boxOffice.entity';
+import { Movie } from 'src/apis/movies/entities/movie.entity';
 
-export interface IBoxOfficeServiceGetBoxOfficeMovies {
-  dateString: string;
-}
-
-export interface IBoxOfficeServiceCreateBoxOffice {
-  dateString: string;
+export interface IBoxOfficeToMovieServiceCreateBoxOfficeToMovie {
+  boxOffice: BoxOffice;
+  movie: Movie;
+  rank: number;
 }

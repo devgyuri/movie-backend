@@ -57,6 +57,7 @@ export class Movie {
   @JoinTable()
   @ManyToMany(() => Genre, (genres) => genres.movies, {
     cascade: true,
+    eager: true,
   })
   @Field(() => [Genre])
   genres: Genre[];
@@ -72,6 +73,7 @@ export class Movie {
   @JoinTable()
   @ManyToMany(() => Director, (directors) => directors.movies, {
     cascade: true,
+    eager: true,
   })
   @Field(() => [Director])
   directors: Director[];
