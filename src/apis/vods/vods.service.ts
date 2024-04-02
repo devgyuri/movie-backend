@@ -14,12 +14,13 @@ export class VodsService {
     private readonly vodsRepository: Repository<Vod>,
   ) {}
 
-  createVod({ url, movieId }: IVodsServiceCreateVod): Promise<Vod> {
+  createVod({ url, movieId, isRep }: IVodsServiceCreateVod): Promise<Vod> {
     return this.vodsRepository.save({
       url,
       movie: {
         id: movieId,
       },
+      isRep,
     });
   }
 

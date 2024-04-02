@@ -13,7 +13,11 @@ export class Poster {
   @Field(() => String)
   url: string;
 
-  @ManyToOne(() => Movie)
+  @Column({ default: false })
+  @Field(() => Boolean)
+  isRep: boolean;
+
+  @ManyToOne(() => Movie, (movie) => movie.posters)
   @Field(() => Movie)
   movie: Movie;
 }

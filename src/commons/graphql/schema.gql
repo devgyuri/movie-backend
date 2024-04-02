@@ -38,6 +38,20 @@ type Genre {
   movies: [Movie!]!
 }
 
+type Poster {
+  id: Int!
+  url: String!
+  isRep: Boolean!
+  movie: Movie!
+}
+
+type Vod {
+  id: Int!
+  url: String!
+  isRep: Boolean!
+  movie: Movie!
+}
+
 type Movie {
   id: String!
   title: String!
@@ -51,6 +65,8 @@ type Movie {
   genres: [Genre!]!
   actors: [Actor!]!
   directors: [Director!]!
+  posters: [Poster!]!
+  vods: [Vod!]!
 }
 
 type Query {

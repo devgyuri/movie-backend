@@ -8,6 +8,10 @@ import { IMovie } from 'src/commons/types/movieDetail.types';
 
 type RequiredBy<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
 
+export interface IMoviesServiceGetTmdbImageUrl {
+  actorName: string;
+}
+
 export interface IMoviesServiceCreateMovie {
   data: IMoviesServiceOpenMovieInfo;
 }
@@ -18,7 +22,7 @@ export interface IMoviesServiceCreateMovieAll {
 
 export type IMoviesServiceOpenMovieInfo = Omit<
   Movie,
-  'avg_star' | 'cnt_star' | 'boxOfficeToMovies'
+  'avg_star' | 'cnt_star' | 'boxOfficeToMovies' | 'posters' | 'vods'
 >;
 
 export type IMoviesServiceOpenPosterInfo = Omit<Poster, 'id'>;

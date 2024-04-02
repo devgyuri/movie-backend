@@ -3,6 +3,7 @@ import { IMoviesServiceOpenVodInfo } from 'src/apis/movies/interfaces/movies-ser
 export interface IVodsServiceCreateVod {
   url: string;
   movieId: string;
+  isRep: boolean;
 }
 
 export interface IVodsServiceCreateVodAll {

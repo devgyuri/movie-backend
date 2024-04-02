@@ -14,12 +14,17 @@ export class PostersService {
     private readonly postersRepository: Repository<Poster>,
   ) {}
 
-  createPoster({ url, movieId }: IPostersServiceCreatePoster): Promise<Poster> {
+  createPoster({
+    url,
+    movieId,
+    isRep,
+  }: IPostersServiceCreatePoster): Promise<Poster> {
     return this.postersRepository.save({
       url,
       movie: {
         id: movieId,
       },
+      isRep,
     });
   }
 

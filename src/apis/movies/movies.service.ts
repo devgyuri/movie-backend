@@ -14,6 +14,7 @@ import {
   IMoviesServiceCreateMovieByTitleAndRlsDt,
   IMoviesServiceFindMovieByTitleAndRlsDt,
   IMoviesServiceFindMovieById,
+  IMoviesServiceGetTmdbImageUrl,
 } from './interfaces/movies-service.interface';
 import { ActorsService } from '../actors/actors.service';
 import { DirectorsService } from '../directors/directors.service';
@@ -38,6 +39,39 @@ export class MoviesService {
     private readonly vodsService: VodsService,
   ) {}
 
+  async getTmdbImageUrl({
+    actorName,
+  }: IMoviesServiceGetTmdbImageUrl): Promise<string> {
+    const result = await axios.get(
+      'https://api.themoviedb.org/3/search/person?',
+      {
+        params: {
+          query: actorName,
+          include_adult: true,
+          language: 'ko-KR',
+          page: 1,
+        },
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        },
+      },
+    );
+
+    let mostPopularIndex = 0;
+    let maxPopularity = 0;
+    result?.data.results.forEach((el, index) => {
+      if (
+        el.known_for_department === 'Acting' &&
+        el.popularity > maxPopularity
+      ) {
+        maxPopularity = el.popularity;
+        mostPopularIndex = index;
+      }
+    });
+    return result?.data.results[mostPopularIndex]?.profile_path ?? '';
+  }
+
   async insertActorsInfo({
     actorNames,
   }: IMoviesServiceInsertActorsInfoArgs): Promise<Actor[]> {
@@ -53,7 +87,8 @@ export class MoviesService {
     });
 
     const newActors = await Promise.all(
-      missingActorNames.map((el) => {
+      missingActorNames.map(async (el) => {
+        // const url = await this.getTmdbImageUrl({ actorName: el });
         return this.actorsService.createActor({ name: el });
       }),
     );
@@ -145,8 +180,8 @@ export class MoviesService {
     const temp = new Movie();
     temp.title = title;
     temp.open_dt = stringToDate(releaseDate);
-    return temp;
-    // return this.createMovieByTitleAndRlsDt({ title, releaseDate });
+    // return temp;
+    return this.createMovieByTitleAndRlsDt({ title, releaseDate });
   }
 
   async createMovieByTitleAndRlsDt({
@@ -218,16 +253,17 @@ export class MoviesService {
       directors,
       genres,
     };
-    const movieResult = await this.createMovie({ data: movieInfo });
+    await this.createMovie({ data: movieInfo });
 
     // 1:N relationship
     const posterUrls = rawData.posters.split('|');
     await Promise.all(
-      posterUrls.map((el) => {
+      posterUrls.map((el, index) => {
         if (el) {
           return this.postersService.createPoster({
             url: el,
             movieId: id,
+            isRep: index === 0 ? true : false,
           });
         }
       }),
@@ -236,17 +272,18 @@ export class MoviesService {
       return el.vodUrl;
     });
     await Promise.all(
-      vodUrls.map((el) => {
+      vodUrls.map((el, index) => {
         if (el) {
           return this.vodsService.createVod({
             url: el,
             movieId: id,
+            isRep: index === 0 ? true : false,
           });
         }
       }),
     );
 
-    return movieResult;
+    return this.findMovieById({ id });
   }
 
   async createOpenMovieInfoAll(): Promise<string> {
@@ -264,7 +301,7 @@ export class MoviesService {
     );
     // const totalCnt = 5;
     const totalCnt = info.data.Data[0].TotalCount;
-    const batch = 10;
+    const batch = 5;
 
     for (let i = 0; i <= totalCnt / batch; i++) {
       const result = await axios.get(
@@ -291,13 +328,14 @@ export class MoviesService {
         // console.log('j: ', j);
         const rawData: IMovie = result.data?.Data[0].Result[j];
 
-        this.createOpenMovieInfo({ rawData });
+        await this.createOpenMovieInfo({ rawData });
       }
     }
 
     return 'DB initializing completed!';
   }
 
+  // except posters and vods
   createMovie({ data }: IMoviesServiceCreateMovie): Promise<Movie> {
     return this.moviesRepository.save({
       ...data,

@@ -13,7 +13,11 @@ export class Vod {
   @Field(() => String)
   url: string;
 
-  @ManyToOne(() => Movie)
+  @Column({ default: false })
+  @Field(() => Boolean)
+  isRep: boolean;
+
+  @ManyToOne(() => Movie, (movie) => movie.vods)
   @Field(() => Movie)
   movie: Movie;
 }

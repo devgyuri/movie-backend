@@ -3,6 +3,7 @@ import { IMoviesServiceOpenPosterInfo } from 'src/apis/movies/interfaces/movies-
 export interface IPostersServiceCreatePoster {
   url: string;
   movieId: string;
+  isRep: boolean;
 }
 
 export interface IPostersServiceCreatePosterAll {

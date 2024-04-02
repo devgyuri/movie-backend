@@ -45,6 +45,8 @@ export class BoxOfficeService {
       boxOfficeResult = await this.findByDate({ dateString });
     }
 
+    console.log('here===========');
+
     const moviesResult = boxOfficeResult.boxOfficeToMovies.map((el) => {
       return el.movie;
     });
@@ -73,6 +75,19 @@ export class BoxOfficeService {
     await this.boxOfficeRepository.save(boxOffice);
 
     // openDt: yyyy-mm-dd
+    // for (let i = 0; i < boxOfficeList.length; i++) {
+    //   const movie = await this.moviesService.findMovieByTitleAndRlsDt({
+    //     title: boxOfficeList[i].movieNm,
+    //     releaseDate: boxOfficeList[i].openDt.replaceAll('-', ''),
+    //   });
+    //   console.log(movie);
+
+    //   await this.boxOfficeToMovieService.createBoxOfficeToMovie({
+    //     boxOffice,
+    //     movie,
+    //     rank: i + 1,
+    //   });
+    // }
     await Promise.all(
       boxOfficeList.map(async (el, index) => {
         const movie = await this.moviesService.findMovieByTitleAndRlsDt({

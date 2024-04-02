@@ -17,6 +17,10 @@ export class Actor {
   // @Field(() => String)
   // code: string;
 
+  // @Column({ type: 'varchar', length: 100 })
+  // @Field(() => String)
+  // url: string;
+
   @ManyToMany(() => Movie, (movies) => movies.actors)
   @Field(() => [Movie])
   movies: Movie[];

@@ -3,6 +3,8 @@ import { Actor } from 'src/apis/actors/entities/actor.entity';
 import { BoxOfficeToMovie } from 'src/apis/boxOfficeToMovie/entities/boxOfficeToMovie.entity';
 import { Director } from 'src/apis/directors/entities/director.entity';
 import { Genre } from 'src/apis/genres/entities/genre.entity';
+import { Poster } from 'src/apis/posters/entities/poster.entity';
+import { Vod } from 'src/apis/vods/entities/vod.entity';
 import {
   Column,
   Entity,
@@ -77,4 +79,12 @@ export class Movie {
   })
   @Field(() => [Director])
   directors: Director[];
+
+  @OneToMany(() => Poster, (poster) => poster.movie, { eager: true })
+  @Field(() => [Poster])
+  posters: Poster[];
+
+  @OneToMany(() => Vod, (vod) => vod.movie, { eager: true })
+  @Field(() => [Vod])
+  vods: Vod[];
 }
