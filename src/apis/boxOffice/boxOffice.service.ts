@@ -47,7 +47,10 @@ export class BoxOfficeService {
 
     console.log('here===========');
 
-    const moviesResult = boxOfficeResult.boxOfficeToMovies.map((el) => {
+    const sortedList = boxOfficeResult.boxOfficeToMovies.sort(
+      (a, b) => a.rank - b.rank,
+    );
+    const moviesResult = sortedList.map((el) => {
       return el.movie;
     });
 
