@@ -15,6 +15,7 @@ import {
   IMoviesServiceFindMovieByTitleAndRlsDt,
   IMoviesServiceFindMovieById,
   IMoviesServiceGetTmdbImageUrl,
+  IMoviesServiceUpdateMovie,
 } from './interfaces/movies-service.interface';
 import { ActorsService } from '../actors/actors.service';
 import { DirectorsService } from '../directors/directors.service';
@@ -346,5 +347,12 @@ export class MoviesService {
     movieArr,
   }: IMoviesServiceCreateMovieAll): Promise<void> {
     await this.moviesRepository.insert(movieArr);
+  }
+
+  async updateMovie(updateInput: IMoviesServiceUpdateMovie): Promise<Movie> {
+    const result = await this.moviesRepository.save({
+      ...updateInput,
+    });
+    return result;
   }
 }

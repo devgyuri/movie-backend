@@ -57,6 +57,7 @@ export class BoxOfficeService {
     return moviesResult;
   }
 
+  // audi_acc를 최신 버전으로 업데이트 하기 위해 시간 순서대로 boxOffice 생성해야 함
   async createBoxOffice({
     dateString,
   }: IBoxOfficeServiceCreateBoxOffice): Promise<void> {
@@ -97,11 +98,17 @@ export class BoxOfficeService {
           title: el.movieNm,
           releaseDate: el.openDt.replaceAll('-', ''),
         });
-        console.log(movie);
+        // console.log(movie);
+        console.log(el);
+
+        const newMovie = await this.moviesService.updateMovie({
+          id: movie.id,
+          audi_acc: Number(el.audiAcc),
+        });
 
         await this.boxOfficeToMovieService.createBoxOfficeToMovie({
           boxOffice,
-          movie,
+          movie: newMovie,
           rank: index + 1,
         });
       }),

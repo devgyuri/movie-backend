@@ -20,6 +20,9 @@ export interface IMoviesServiceCreateMovieAll {
   movieArr: IMoviesServiceOpenMovieInfo[];
 }
 
+export type IMoviesServiceUpdateMovie = Omit<Partial<Movie>, 'id'> &
+  Pick<Movie, 'id'>;
+
 export type IMoviesServiceOpenMovieInfo = Omit<
   Movie,
   'avg_star' | 'cnt_star' | 'boxOfficeToMovies' | 'posters' | 'vods'
