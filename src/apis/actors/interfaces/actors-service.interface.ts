@@ -1,3 +1,7 @@
+export interface IActorsServiceFindById {
+  id: number;
+}
+
 export interface IActorsServiceFindByNames {
   actorNames: string[];
 }
@@ -10,4 +14,9 @@ export interface IActorsServiceBulkInsert {
 
 export interface IActorsServiceCreateActor {
   name: string;
+}
+
+export interface IActorsServiceUpdateUrl {
+  id: number;
+  url: string;
 }

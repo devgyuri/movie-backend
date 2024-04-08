@@ -6,6 +6,8 @@ import {
   IActorsServiceFindByNames,
   IActorsServiceBulkInsert,
   IActorsServiceCreateActor,
+  IActorsServiceUpdateUrl,
+  IActorsServiceFindById,
 } from './interfaces/actors-service.interface';
 
 @Injectable()
@@ -14,6 +16,14 @@ export class ActorsService {
     @InjectRepository(Actor)
     private readonly actorsRepository: Repository<Actor>,
   ) {}
+
+  findById({ id }: IActorsServiceFindById): Promise<Actor> {
+    return this.actorsRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 
   findByNames({ actorNames }: IActorsServiceFindByNames): Promise<Actor[]> {
     return this.actorsRepository.find({
@@ -28,6 +38,15 @@ export class ActorsService {
   createActor({ name }: IActorsServiceCreateActor): Promise<Actor> {
     return this.actorsRepository.save({
       name,
+    });
+  }
+
+  async updateUrl({ id, url }: IActorsServiceUpdateUrl): Promise<Actor> {
+    const originalActor = await this.findById({ id });
+
+    return this.actorsRepository.save({
+      ...originalActor,
+      url,
     });
   }
 }

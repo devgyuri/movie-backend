@@ -1,5 +1,6 @@
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActorsService } from './actors.service';
+import { Actor } from './entities/actor.entity';
 
 @Resolver()
 export class ActorsResolver {
@@ -10,5 +11,13 @@ export class ActorsResolver {
   @Query(() => String)
   fetchActor(): string {
     return 'dummy fetch actor';
+  }
+
+  @Mutation(() => Actor)
+  updateActorImage(
+    @Args('id') id: number,
+    @Args('url') url: string, //
+  ): Promise<Actor> {
+    return this.actorsService.updateUrl({ id, url });
   }
 }

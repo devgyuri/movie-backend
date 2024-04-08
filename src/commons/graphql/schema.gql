@@ -5,6 +5,7 @@
 type Actor {
   id: Int!
   name: String!
+  url: String!
   movies: [Movie!]!
 }
 
@@ -79,5 +80,6 @@ type Query {
 }
 
 type Mutation {
+  updateActorImage(id: Float!, url: String!): Actor!
   initializeTable: String!
 }
