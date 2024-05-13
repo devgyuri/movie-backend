@@ -8,7 +8,10 @@ import {
   IActorsServiceCreateActor,
   IActorsServiceUpdateUrl,
   IActorsServiceFindById,
+  IActorsSErviceFetchImage,
+  IActorsServiceFindByName,
 } from './interfaces/actors-service.interface';
+import axios from 'axios';
 
 @Injectable()
 export class ActorsService {
@@ -21,6 +24,14 @@ export class ActorsService {
     return this.actorsRepository.findOne({
       where: {
         id,
+      },
+    });
+  }
+
+  findByName({ name }: IActorsServiceFindByName): Promise<Actor> {
+    return this.actorsRepository.findOne({
+      where: {
+        name,
       },
     });
   }
@@ -48,5 +59,38 @@ export class ActorsService {
       ...originalActor,
       url,
     });
+  }
+
+  async fetchImage({ name }: IActorsSErviceFetchImage): Promise<string> {
+    const actor = await this.findByName({ name });
+
+    if (actor.url === '') {
+      const result = await axios.get(
+        'https://api.themoviedb.org/3/search/person?',
+        {
+          params: {
+            query: name,
+            include_adult: false,
+            language: 'ko-KR',
+            page: 1,
+          },
+          headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+          },
+        },
+      );
+
+      const imageUrl = result.data.results[0].profile_path;
+
+      this.actorsRepository.save({
+        ...actor,
+        url: imageUrl,
+      });
+
+      return imageUrl;
+    }
+
+    return actor.url;
   }
 }

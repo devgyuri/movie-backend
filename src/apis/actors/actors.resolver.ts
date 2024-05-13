@@ -20,4 +20,9 @@ export class ActorsResolver {
   ): Promise<Actor> {
     return this.actorsService.updateUrl({ id, url });
   }
+
+  @Mutation(() => String)
+  fetchActorImage(@Args('name') name: string): Promise<string> {
+    return this.actorsService.fetchImage({ name });
+  }
 }

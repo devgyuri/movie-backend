@@ -81,5 +81,6 @@ type Query {
 
 type Mutation {
   updateActorImage(id: Float!, url: String!): Actor!
+  fetchActorImage(name: String!): String!
   initializeTable: String!
 }
