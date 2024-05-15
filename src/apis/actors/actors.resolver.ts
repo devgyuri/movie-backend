@@ -13,16 +13,16 @@ export class ActorsResolver {
     return 'dummy fetch actor';
   }
 
+  @Query(() => String)
+  fetchActorImage(@Args('name') name: string): Promise<string> {
+    return this.actorsService.fetchImage({ name });
+  }
+
   @Mutation(() => Actor)
   updateActorImage(
     @Args('id') id: number,
     @Args('url') url: string, //
   ): Promise<Actor> {
     return this.actorsService.updateUrl({ id, url });
-  }
-
-  @Mutation(() => String)
-  fetchActorImage(@Args('name') name: string): Promise<string> {
-    return this.actorsService.fetchImage({ name });
   }
 }

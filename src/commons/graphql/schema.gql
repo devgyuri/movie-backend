@@ -72,6 +72,7 @@ type Movie {
 
 type Query {
   fetchActor: String!
+  fetchActorImage(name: String!): String!
   fetchBoxOffice(date: String!): [Movie!]!
   fetchTemp: String!
   fetchBoxOfficeToMovie: String!
@@ -81,6 +82,5 @@ type Query {
 
 type Mutation {
   updateActorImage(id: Float!, url: String!): Actor!
-  fetchActorImage(name: String!): String!
   initializeTable: String!
 }
