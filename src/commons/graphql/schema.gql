@@ -74,7 +74,7 @@ type Query {
   fetchActor: String!
   fetchActorImage(name: String!): String!
   fetchBoxOffice(date: String!): [Movie!]!
-  fetchTemp: String!
+  fetchMovie(id: String!): Movie!
   fetchBoxOfficeToMovie: String!
   fetchPoster: String!
   fetchVod: String!

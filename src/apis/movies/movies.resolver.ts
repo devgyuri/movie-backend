@@ -1,5 +1,6 @@
-import { Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { MoviesService } from './movies.service';
+import { Movie } from './entities/movie.entity';
 
 @Resolver()
 export class MoviesResolver {
@@ -10,8 +11,8 @@ export class MoviesResolver {
     return this.moviesService.createOpenMovieInfoAll();
   }
 
-  @Query(() => String)
-  fetchTemp(): string {
-    return 'Hello world!';
+  @Query(() => Movie)
+  fetchMovie(@Args('id') id: string): Promise<Movie> {
+    return this.moviesService.findMovieById({ id });
   }
 }

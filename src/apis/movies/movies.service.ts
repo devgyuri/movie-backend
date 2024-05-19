@@ -147,7 +147,47 @@ export class MoviesService {
     return [...prevGenres, ...newGenres];
   }
 
+  // 해당 영화를 조회할 때 배우 이미지가 존재하지 않으면 open api로 요청해서 받아오기
   async findMovieById({ id }: IMoviesServiceFindMovieById): Promise<Movie> {
+    const result = await this.moviesRepository.findOne({
+      where: { id },
+      relations: {
+        actors: true,
+      },
+    });
+
+    const prevActors = result.actors;
+    // const newActors = await Promise.all(
+    //   prevActors.map((el: Actor) => {
+    //     if (el.url === '') {
+    //       return {
+    //         ...el,
+    //         url: this.getTmdbImageUrl({ actorName: el.name }),
+    //       };
+    //     } else {
+    //       return el;
+    //     }
+    //   }),
+    // );
+    const newActors: Actor[] = [];
+    for (let i = 0; i < prevActors.length; i++) {
+      if (prevActors[i].url === '') {
+        const imageUrl = await this.getTmdbImageUrl({
+          actorName: prevActors[i].name,
+        });
+        const updatedActor = await this.actorsService.updateUrl({
+          id: prevActors[i].id,
+          url: imageUrl,
+        });
+        newActors.push(updatedActor);
+      } else {
+        newActors.push(prevActors[i]);
+      }
+    }
+
+    console.log('========actor url test=========');
+    console.log(newActors);
+
     return this.moviesRepository.findOne({
       where: { id },
       relations: {
