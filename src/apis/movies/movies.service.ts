@@ -27,6 +27,7 @@ import { Director } from '../directors/entities/director.entity';
 import { Genre } from '../genres/entities/genre.entity';
 import { IMovie } from 'src/commons/types/movieDetail.types';
 import { stringToDate } from 'src/commons/libraries/date';
+import { StillsService } from '../stills/stills.service';
 
 @Injectable()
 export class MoviesService {
@@ -37,6 +38,7 @@ export class MoviesService {
     private readonly directorsService: DirectorsService,
     private readonly genresService: GenresService,
     private readonly postersService: PostersService,
+    private readonly stillsService: StillsService,
     private readonly vodsService: VodsService,
   ) {}
 
@@ -267,6 +269,7 @@ export class MoviesService {
     const audi_acc = Number(rawData.audiAcc ?? 0);
     const rating = Number(rawData.rating.replace(/[^0-9]/g, ''));
     const plot = rawData.plots.plot[0].plotText;
+    const runtime = Number(rawData.runtime);
 
     // N:M relationship
     const actorNames = rawData.actors.actor.map((el) => {
@@ -290,6 +293,7 @@ export class MoviesService {
       audi_acc,
       rating,
       plot,
+      runtime,
       actors,
       directors,
       genres,
@@ -301,7 +305,27 @@ export class MoviesService {
     await Promise.all(
       posterUrls.map((el, index) => {
         if (el) {
+          // const shortenedUrl = el.replace(
+          //   'http://file.koreafilm.or.kr/thm/',
+          //   '',
+          // );
           return this.postersService.createPoster({
+            url: el,
+            movieId: id,
+            isRep: index === 0 ? true : false,
+          });
+        }
+      }),
+    );
+    const stillUrls = rawData.stlls.split('|');
+    await Promise.all(
+      stillUrls.map((el, index) => {
+        if (el) {
+          // const shortenedUrl = el.replace(
+          //   'http://file.koreafilm.or.kr/thm/',
+          //   '',
+          // );
+          return this.stillsService.createStill({
             url: el,
             movieId: id,
             isRep: index === 0 ? true : false,

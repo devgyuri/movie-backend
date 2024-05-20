@@ -17,7 +17,7 @@ export class Actor {
   // @Field(() => String)
   // code: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, default: '' })
   @Field(() => String)
   url: string;
 

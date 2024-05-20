@@ -13,6 +13,8 @@ import { PostersService } from '../posters/posters.service';
 import { VodsService } from '../vods/vods.service';
 import { Poster } from '../posters/entities/poster.entity';
 import { Vod } from '../vods/entities/vod.entity';
+import { StillsService } from '../stills/stills.service';
+import { Still } from '../stills/entities/stills.entity';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { Vod } from '../vods/entities/vod.entity';
       Director,
       Genre,
       Poster,
+      Still,
       Vod,
       Movie, //
     ]),
@@ -30,6 +33,7 @@ import { Vod } from '../vods/entities/vod.entity';
     DirectorsService,
     GenresService,
     PostersService,
+    StillsService,
     VodsService,
     MoviesResolver, //
     MoviesService,

@@ -46,6 +46,13 @@ type Poster {
   movie: Movie!
 }
 
+type Still {
+  id: Int!
+  url: String!
+  isRep: Boolean!
+  movie: Movie!
+}
+
 type Vod {
   id: Int!
   url: String!
@@ -62,11 +69,13 @@ type Movie {
   cnt_star: Int!
   rating: Int!
   plot: String!
+  runtime: Int!
   boxOfficeToMovies: [BoxOfficeToMovie!]!
   genres: [Genre!]!
   actors: [Actor!]!
   directors: [Director!]!
   posters: [Poster!]!
+  stills: [Still!]!
   vods: [Vod!]!
 }
 
@@ -77,6 +86,7 @@ type Query {
   fetchMovie(id: String!): Movie!
   fetchBoxOfficeToMovie: String!
   fetchPoster: String!
+  fetchStill: String!
   fetchVod: String!
 }
 

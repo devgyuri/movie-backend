@@ -25,7 +25,7 @@ export type IMoviesServiceUpdateMovie = Omit<Partial<Movie>, 'id'> &
 
 export type IMoviesServiceOpenMovieInfo = Omit<
   Movie,
-  'avg_star' | 'cnt_star' | 'boxOfficeToMovies' | 'posters' | 'vods'
+  'avg_star' | 'cnt_star' | 'boxOfficeToMovies' | 'posters' | 'stills' | 'vods'
 >;
 
 export type IMoviesServiceOpenPosterInfo = Omit<Poster, 'id'>;

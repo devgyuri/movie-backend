@@ -4,6 +4,7 @@ import { BoxOfficeToMovie } from 'src/apis/boxOfficeToMovie/entities/boxOfficeTo
 import { Director } from 'src/apis/directors/entities/director.entity';
 import { Genre } from 'src/apis/genres/entities/genre.entity';
 import { Poster } from 'src/apis/posters/entities/poster.entity';
+import { Still } from 'src/apis/stills/entities/stills.entity';
 import { Vod } from 'src/apis/vods/entities/vod.entity';
 import {
   Column,
@@ -49,6 +50,10 @@ export class Movie {
   @Field(() => String)
   plot: string;
 
+  @Column({ type: 'int' })
+  @Field(() => Int)
+  runtime: number;
+
   @OneToMany(
     () => BoxOfficeToMovie,
     (boxOfficeToMovie) => boxOfficeToMovie.movie,
@@ -83,6 +88,10 @@ export class Movie {
   @OneToMany(() => Poster, (poster) => poster.movie, { eager: true })
   @Field(() => [Poster])
   posters: Poster[];
+
+  @OneToMany(() => Still, (still) => still.movie, { eager: true })
+  @Field(() => [Still])
+  stills: Still[];
 
   @OneToMany(() => Vod, (vod) => vod.movie, { eager: true })
   @Field(() => [Vod])
