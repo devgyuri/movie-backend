@@ -333,7 +333,11 @@ export class MoviesService {
         }
       }),
     );
-    const vodUrls = rawData.vods.vod.map((el) => {
+    let repVodIdx = 0;
+    const vodUrls = rawData.vods.vod.map((el, idx) => {
+      if (el.vodClass.includes('메인예고') || el.vodClass.includes('1차예고')) {
+        repVodIdx = idx;
+      }
       return el.vodUrl;
     });
     await Promise.all(
@@ -342,7 +346,7 @@ export class MoviesService {
           return this.vodsService.createVod({
             url: el,
             movieId: id,
-            isRep: index === 0 ? true : false,
+            isRep: index === repVodIdx ? true : false,
           });
         }
       }),
