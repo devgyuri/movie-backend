@@ -27,6 +27,31 @@ type BoxOfficeToMovie {
   rank: Int!
 }
 
+type Like {
+  id: Int!
+  user: User!
+  movie: Movie!
+}
+
+type User {
+  id: Int!
+  password: String!
+  email: String!
+  name: String!
+  image: String!
+  comments: [Comment!]!
+  likes: [Like!]!
+}
+
+type Comment {
+  id: Int!
+  contents: String!
+  created_at: DateTime!
+  star: Float!
+  user: User!
+  movie: Movie!
+}
+
 type Director {
   id: Int!
   name: String!
@@ -43,6 +68,12 @@ type Poster {
   id: Int!
   url: String!
   isRep: Boolean!
+  movie: Movie!
+}
+
+type Seen {
+  id: Int!
+  user: User!
   movie: Movie!
 }
 
@@ -77,6 +108,9 @@ type Movie {
   posters: [Poster!]!
   stills: [Still!]!
   vods: [Vod!]!
+  comments: [Comment!]!
+  likes: [Like!]!
+  seen: [Seen!]!
 }
 
 type Query {

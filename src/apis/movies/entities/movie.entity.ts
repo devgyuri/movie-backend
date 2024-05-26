@@ -1,9 +1,12 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { Actor } from 'src/apis/actors/entities/actor.entity';
 import { BoxOfficeToMovie } from 'src/apis/boxOfficeToMovie/entities/boxOfficeToMovie.entity';
+import { Comment } from 'src/apis/comments/entities/comment.entity';
 import { Director } from 'src/apis/directors/entities/director.entity';
 import { Genre } from 'src/apis/genres/entities/genre.entity';
+import { Like } from 'src/apis/likes/entities/like.entity';
 import { Poster } from 'src/apis/posters/entities/poster.entity';
+import { Seen } from 'src/apis/seen/entities/seen.entity';
 import { Still } from 'src/apis/stills/entities/stills.entity';
 import { Vod } from 'src/apis/vods/entities/vod.entity';
 import {
@@ -96,4 +99,16 @@ export class Movie {
   @OneToMany(() => Vod, (vod) => vod.movie, { eager: true })
   @Field(() => [Vod])
   vods: Vod[];
+
+  @OneToMany(() => Comment, (comment) => comment.movie)
+  @Field(() => [Comment])
+  comments: Comment[];
+
+  @OneToMany(() => Like, (like) => like.movie)
+  @Field(() => [Like])
+  likes: Like[];
+
+  @OneToMany(() => Seen, (seen) => seen.movie)
+  @Field(() => [Seen])
+  seen: Seen[];
 }
