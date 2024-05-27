@@ -116,17 +116,19 @@ type Movie {
 type Query {
   fetchActor: String!
   fetchActorImage(name: String!): String!
+  fetchUser: String!
   fetchBoxOffice(date: String!): [Movie!]!
   fetchMovie(id: String!): Movie!
   fetchBoxOfficeToMovie: String!
   fetchPoster: String!
   fetchStill: String!
-  fetchUser: String!
   fetchVod: String!
 }
 
 type Mutation {
   updateActorImage(id: Float!, url: String!): Actor!
-  initializeTable: String!
+  login(email: String!, password: String!): String!
+  restoreAccessToken: String!
   createUser(email: String!, password: String!, name: String!): User!
+  initializeTable: String!
 }

@@ -13,10 +13,12 @@ import { BoxOfficeModule } from './apis/boxOffice/boxOffice.module';
 import { BoxOfficeToMovieModule } from './apis/boxOfficeToMovie/boxOfficeToMovie.module';
 import { StillsModule } from './apis/stills/stills.module';
 import { UsersModule } from './apis/users/users.module';
+import { AuthModule } from './apis/auth/auth.module';
 
 @Module({
   imports: [
     ActorsModule,
+    AuthModule,
     BoxOfficeModule,
     BoxOfficeToMovieModule,
     DirectorsModule,
