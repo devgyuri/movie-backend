@@ -12,6 +12,7 @@ import { GenresModule } from './apis/genres/genres.module';
 import { BoxOfficeModule } from './apis/boxOffice/boxOffice.module';
 import { BoxOfficeToMovieModule } from './apis/boxOfficeToMovie/boxOfficeToMovie.module';
 import { StillsModule } from './apis/stills/stills.module';
+import { UsersModule } from './apis/users/users.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { StillsModule } from './apis/stills/stills.module';
     MoviesModule,
     PostersModule,
     StillsModule,
+    UsersModule,
     VodsModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({

@@ -30,6 +30,7 @@
     "@nestjs/typeorm": "^10.0.2",
     "apollo-server-express": "3.11.1",
     "axios": "^1.6.8",
+    "bcrypt": "^5.1.1",
     "graphql": "^16.8.1",
     "mysql2": "^3.9.2",
     "reflect-metadata": "^0.2.0",
