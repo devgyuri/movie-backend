@@ -14,6 +14,8 @@ import { BoxOfficeToMovieModule } from './apis/boxOfficeToMovie/boxOfficeToMovie
 import { StillsModule } from './apis/stills/stills.module';
 import { UsersModule } from './apis/users/users.module';
 import { AuthModule } from './apis/auth/auth.module';
+import { LikesModule } from './apis/likes/likes.module';
+import { SeenModule } from './apis/seen/seen.module';
 
 @Module({
   imports: [
@@ -23,8 +25,10 @@ import { AuthModule } from './apis/auth/auth.module';
     BoxOfficeToMovieModule,
     DirectorsModule,
     GenresModule,
+    LikesModule,
     MoviesModule,
     PostersModule,
+    SeenModule,
     StillsModule,
     UsersModule,
     VodsModule,

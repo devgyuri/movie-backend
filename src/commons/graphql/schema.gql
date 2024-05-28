@@ -120,7 +120,9 @@ type Query {
   fetchBoxOffice(date: String!): [Movie!]!
   fetchMovie(id: String!): Movie!
   fetchBoxOfficeToMovie: String!
+  fetchLike(userId: Float!, movieId: String!): Boolean!
   fetchPoster: String!
+  fetchSeen(userId: Float!, movieId: String!): Boolean!
   fetchStill: String!
   fetchVod: String!
 }
@@ -131,4 +133,5 @@ type Mutation {
   restoreAccessToken: String!
   createUser(email: String!, password: String!, name: String!): User!
   initializeTable: String!
+  saveLike(userId: Float!, movieId: String!): Boolean!
 }
