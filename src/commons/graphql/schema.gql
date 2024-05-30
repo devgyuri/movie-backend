@@ -120,8 +120,8 @@ type Query {
   fetchBoxOffice(date: String!): [Movie!]!
   fetchMovie(id: String!): Movie!
   fetchBoxOfficeToMovie: String!
-  fetchLike(userId: Float!, movieId: String!): Boolean!
-  fetchLikeCount(movieId: String!): Int!
+  fetchLike(userId: Int!, movieId: String!): Boolean!
+  fetchLikeCountByMovie(movieId: String!): Int!
   fetchPoster: String!
   fetchSeen(userId: Float!, movieId: String!): Boolean!
   fetchStill: String!
@@ -134,6 +134,6 @@ type Mutation {
   restoreAccessToken: String!
   createUser(email: String!, password: String!, name: String!): User!
   initializeTable: String!
-  saveLike(userId: Float!, movieId: String!): Boolean!
-  deleteLike(userId: Float!, movieId: String!): Boolean!
+  createLike(userId: Int!, movieId: String!): Boolean!
+  deleteLike(userId: Int!, movieId: String!): Boolean!
 }

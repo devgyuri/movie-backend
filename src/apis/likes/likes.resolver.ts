@@ -9,18 +9,18 @@ export class LikesResolver {
 
   @Query(() => Boolean)
   fetchLike(
-    @Args('userId') userId: number, //
+    @Args('userId', { type: () => Int }) userId: number, //
     @Args('movieId') movieId: string,
   ): Promise<boolean> {
     return this.likesService.findByUserAndMovie({ userId, movieId });
   }
 
   @Mutation(() => Boolean)
-  saveLike(
-    @Args('userId') userId: number, //
+  createLike(
+    @Args('userId', { type: () => Int }) userId: number, //
     @Args('movieId') movieId: string,
   ): Promise<boolean> {
-    return this.likesService.saveLike({
+    return this.likesService.createLike({
       userId,
       movieId,
     });
@@ -28,7 +28,7 @@ export class LikesResolver {
 
   @Mutation(() => Boolean)
   deleteLike(
-    @Args('userId') userId: number, //
+    @Args('userId', { type: () => Int }) userId: number, //
     @Args('movieId') movieId: string,
   ): Promise<boolean> {
     return this.likesService.deleteLike({
@@ -38,7 +38,7 @@ export class LikesResolver {
   }
 
   @Query(() => Int)
-  fetchLikeCount(
+  fetchLikeCountByMovie(
     @Args('movieId') movieId: string, //
   ): Promise<number> {
     return this.likesService.fetchLikeCountByMovie({

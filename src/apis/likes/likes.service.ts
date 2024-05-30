@@ -30,7 +30,10 @@ export class LikesService {
     return result !== null;
   }
 
-  async saveLike({ userId, movieId }: ILikesServiceSaveLike): Promise<boolean> {
+  async createLike({
+    userId,
+    movieId,
+  }: ILikesServiceSaveLike): Promise<boolean> {
     const result = await this.likesRepository.save({
       user: {
         id: userId,
