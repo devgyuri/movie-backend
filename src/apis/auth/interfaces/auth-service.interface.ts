@@ -19,3 +19,7 @@ export interface IAuthServiceSetRefreshToken {
   user: User;
   context: IContext;
 }
+
+export interface ILoginUserResult {
+  accessToken: string;
+}

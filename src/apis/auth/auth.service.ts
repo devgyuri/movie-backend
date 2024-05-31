@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import {
   IAuthServiceGetAccessToken,
   IAuthServiceLogin,
+  ILoginUserResult,
   IAuthServiceRestoreAccessToken,
   IAuthServiceSetRefreshToken,
 } from './interfaces/auth-service.interface';
@@ -20,7 +21,7 @@ export class AuthService {
     email,
     password,
     context,
-  }: IAuthServiceLogin): Promise<string> {
+  }: IAuthServiceLogin): Promise<ILoginUserResult> {
     const user = await this.usersService.findOneByEmail({ email });
 
     if (!user) {
@@ -33,7 +34,9 @@ export class AuthService {
     }
 
     this.setRefreshToken({ user, context });
-    return this.getAccessToken({ user });
+    return {
+      accessToken: this.getAccessToken({ user }),
+    };
   }
 
   getAccessToken({ user }: IAuthServiceGetAccessToken): string {

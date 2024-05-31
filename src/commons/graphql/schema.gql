@@ -113,6 +113,10 @@ type Movie {
   seen: [Seen!]!
 }
 
+type LoginUserOutput {
+  accessToken: String!
+}
+
 type Query {
   fetchActor: String!
   fetchActorImage(name: String!): String!
@@ -130,7 +134,7 @@ type Query {
 
 type Mutation {
   updateActorImage(id: Float!, url: String!): Actor!
-  login(email: String!, password: String!): String!
+  loginUser(email: String!, password: String!): LoginUserOutput!
   restoreAccessToken: String!
   createUser(email: String!, password: String!, name: String!): User!
   initializeTable: String!

@@ -3,6 +3,8 @@ import { AuthService } from './auth.service';
 import { IContext } from 'src/commons/interfaces/context';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
+import { ILoginUserResult } from './interfaces/auth-service.interface';
+import { LoginUserOutput } from './dto/logiin-user.output';
 
 @Resolver()
 export class AuthResolver {
@@ -10,12 +12,12 @@ export class AuthResolver {
     private readonly authService: AuthService, //
   ) {}
 
-  @Mutation(() => String)
-  login(
+  @Mutation(() => LoginUserOutput)
+  loginUser(
     @Args('email') email: string, //
     @Args('password') password: string,
     @Context() context: IContext,
-  ): Promise<string> {
+  ): Promise<ILoginUserResult> {
     return this.authService.login({ email, password, context });
   }
 
