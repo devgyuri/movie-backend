@@ -20,6 +20,6 @@ export interface IAuthServiceSetRefreshToken {
   context: IContext;
 }
 
-export interface ILoginUserResult {
+export interface IAccessToken {
   accessToken: string;
 }

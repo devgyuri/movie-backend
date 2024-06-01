@@ -5,9 +5,9 @@ import { JwtService } from '@nestjs/jwt';
 import {
   IAuthServiceGetAccessToken,
   IAuthServiceLogin,
-  ILoginUserResult,
   IAuthServiceRestoreAccessToken,
   IAuthServiceSetRefreshToken,
+  IAccessToken,
 } from './interfaces/auth-service.interface';
 
 @Injectable()
@@ -17,11 +17,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login({
+  async loginUser({
     email,
     password,
     context,
-  }: IAuthServiceLogin): Promise<ILoginUserResult> {
+  }: IAuthServiceLogin): Promise<IAccessToken> {
     const user = await this.usersService.findOneByEmail({ email });
 
     if (!user) {
@@ -34,19 +34,19 @@ export class AuthService {
     }
 
     this.setRefreshToken({ user, context });
+    return this.getAccessToken({ user });
+  }
+
+  getAccessToken({ user }: IAuthServiceGetAccessToken): IAccessToken {
     return {
-      accessToken: this.getAccessToken({ user }),
+      accessToken: this.jwtService.sign(
+        { sub: user.id }, //
+        { secret: process.env.ACCESS_TOKEN_SECRET, expiresIn: '1d' },
+      ),
     };
   }
 
-  getAccessToken({ user }: IAuthServiceGetAccessToken): string {
-    return this.jwtService.sign(
-      { sub: user.id }, //
-      { secret: process.env.ACCESS_TOKEN_SECRET, expiresIn: '1d' },
-    );
-  }
-
-  restoreAccessToken({ user }: IAuthServiceRestoreAccessToken): string {
+  restoreAccessToken({ user }: IAuthServiceRestoreAccessToken): IAccessToken {
     return this.getAccessToken({ user });
   }
 
