@@ -34,6 +34,7 @@ export class AuthService {
     }
 
     this.setRefreshToken({ user, context });
+    console.log('refresh token');
     return this.getAccessToken({ user });
   }
 
@@ -41,7 +42,7 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(
         { sub: user.id }, //
-        { secret: process.env.ACCESS_TOKEN_SECRET, expiresIn: '1d' },
+        { secret: process.env.ACCESS_TOKEN_SECRET, expiresIn: '2m' },
       ),
     };
   }
@@ -69,7 +70,7 @@ export class AuthService {
     // );
     // context.res.setHeader(
     //   'Access-Control-Allow-Origin',
-    //   'https://myfrontsite.com',
+    //   'http://localhost:3000',
     // );
   }
 }
