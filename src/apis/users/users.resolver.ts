@@ -1,9 +1,10 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UsersService } from './users.service';
-import { User } from './entities/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { IContext } from 'src/commons/interfaces/context';
+import { IProfile } from './interfaces/users-service.interface';
+import { Profile } from './dto/profile';
 
 @Resolver()
 export class UsersResolver {
@@ -12,22 +13,23 @@ export class UsersResolver {
   ) {}
 
   @UseGuards(GqlAuthGuard('access'))
-  @Query(() => String)
+  // @Query(() => OmitType(User, ['password', 'likes', 'comments']))
+  @Query(() => Profile)
   fetchUser(
     @Context() context: IContext, //
-  ): string {
+  ): Promise<IProfile> {
     console.log('================');
     console.log(context.req.user);
     console.log('================');
-    return '인가에 성공하였습니다.';
+    return this.usersService.findOneById({ id: Number(context.req.user.id) });
   }
 
-  @Mutation(() => User)
-  createUser(
+  @Mutation(() => Boolean)
+  signUp(
     @Args('email') email: string,
     @Args('password') password: string,
     @Args('name') name: string,
-  ): Promise<User> {
+  ): Promise<boolean> {
     return this.usersService.create({ email, password, name });
   }
 }

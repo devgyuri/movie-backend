@@ -23,3 +23,11 @@ export interface IAuthServiceSetRefreshToken {
 export interface IAccessToken {
   accessToken: string;
 }
+
+export interface IAuthServiceRemoveRefreshToken {
+  context: IContext;
+}
+
+export interface IAuthServiceLogout {
+  context: IContext;
+}

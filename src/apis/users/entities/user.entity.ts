@@ -18,13 +18,13 @@ export class User {
   @Field(() => String)
   email: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 20 })
   @Field(() => String)
   name: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   @Field(() => String)
-  image: string;
+  picture: string;
 
   @OneToMany(() => Comment, (comment) => comment.user)
   @Field(() => [Comment])

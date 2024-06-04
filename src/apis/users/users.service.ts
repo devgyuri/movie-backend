@@ -4,7 +4,9 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import {
   IUsersServiceCreate,
+  IUsersServiceFindOneById,
   IUsersServiceFindOneByEmail,
+  IProfile,
 } from './interfaces/users-service.interface';
 import * as bcrypt from 'bcrypt';
 
@@ -14,11 +16,28 @@ export class UsersService {
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
   ) {}
 
+  async findOneById({ id }: IUsersServiceFindOneById): Promise<IProfile> {
+    const result = await this.usersRepository.findOne({
+      where: { id },
+    });
+
+    return {
+      id: result.id,
+      name: result.name,
+      picture: result.picture,
+      email: result.email,
+    };
+  }
+
   findOneByEmail({ email }: IUsersServiceFindOneByEmail): Promise<User> {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-  async create({ email, password, name }: IUsersServiceCreate): Promise<User> {
+  async create({
+    email,
+    password,
+    name,
+  }: IUsersServiceCreate): Promise<boolean> {
     const user = await this.findOneByEmail({ email });
     if (user) {
       throw new ConflictException('이미 등록한 이메일입니다.');
@@ -26,10 +45,12 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    return this.usersRepository.save({
+    const result = await this.usersRepository.save({
       email,
       password: hashedPassword,
       name,
     });
+
+    return result !== null;
   }
 }

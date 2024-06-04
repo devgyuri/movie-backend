@@ -38,7 +38,7 @@ type User {
   password: String!
   email: String!
   name: String!
-  image: String!
+  picture: String!
   comments: [Comment!]!
   likes: [Like!]!
 }
@@ -113,6 +113,13 @@ type Movie {
   seen: [Seen!]!
 }
 
+type Profile {
+  id: Int!
+  email: String!
+  name: String!
+  picture: String
+}
+
 type AccessToken {
   accessToken: String!
 }
@@ -120,7 +127,7 @@ type AccessToken {
 type Query {
   fetchActor: String!
   fetchActorImage(name: String!): String!
-  fetchUser: String!
+  fetchUser: Profile!
   fetchBoxOffice(date: String!): [Movie!]!
   fetchMovie(id: String!): Movie!
   fetchBoxOfficeToMovie: String!
@@ -135,8 +142,9 @@ type Query {
 type Mutation {
   updateActorImage(id: Float!, url: String!): Actor!
   loginUser(email: String!, password: String!): AccessToken!
+  logoutUser: String!
   restoreAccessToken: AccessToken!
-  createUser(email: String!, password: String!, name: String!): User!
+  signUp(email: String!, password: String!, name: String!): Boolean!
   initializeTable: String!
   createLike(userId: Int!, movieId: String!): Boolean!
   deleteLike(userId: Int!, movieId: String!): Boolean!

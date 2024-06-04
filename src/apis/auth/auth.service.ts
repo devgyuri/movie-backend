@@ -8,6 +8,8 @@ import {
   IAuthServiceRestoreAccessToken,
   IAuthServiceSetRefreshToken,
   IAccessToken,
+  IAuthServiceRemoveRefreshToken,
+  IAuthServiceLogout,
 } from './interfaces/auth-service.interface';
 
 @Injectable()
@@ -42,7 +44,7 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(
         { sub: user.id }, //
-        { secret: process.env.ACCESS_TOKEN_SECRET, expiresIn: '2m' },
+        { secret: process.env.ACCESS_TOKEN_SECRET, expiresIn: '1d' },
       ),
     };
   }
@@ -72,5 +74,14 @@ export class AuthService {
     //   'Access-Control-Allow-Origin',
     //   'http://localhost:3000',
     // );
+  }
+
+  removeRefreshToken({ context }: IAuthServiceRemoveRefreshToken): void {
+    context.res.setHeader('set-Cookie', `refreshToken=; path=/;`);
+  }
+
+  logoutUser({ context }: IAuthServiceLogout): string {
+    this.removeRefreshToken({ context });
+    return '성공적으로 로그아웃 하였습니다.';
   }
 }
