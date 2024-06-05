@@ -1,16 +1,9 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { ObjectType, OmitType } from '@nestjs/graphql';
+import { User } from '../entities/user.entity';
 
 @ObjectType()
-export class Profile {
-  @Field(() => Int)
-  id: number;
-
-  @Field(() => String)
-  email: string;
-
-  @Field(() => String)
-  name: string;
-
-  @Field(() => String, { nullable: true })
-  picture: string;
-}
+export class Profile extends OmitType(User, [
+  'password',
+  'likes',
+  'comments',
+]) {}

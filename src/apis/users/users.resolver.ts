@@ -3,8 +3,9 @@ import { UsersService } from './users.service';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { IContext } from 'src/commons/interfaces/context';
-import { IProfile } from './interfaces/users-service.interface';
 import { Profile } from './dto/profile';
+import { UpdateUserInput } from './dto/update-user.input';
+import { CreateUserInput } from './dto/create-user.input';
 
 @Resolver()
 export class UsersResolver {
@@ -13,23 +14,36 @@ export class UsersResolver {
   ) {}
 
   @UseGuards(GqlAuthGuard('access'))
-  // @Query(() => OmitType(User, ['password', 'likes', 'comments']))
   @Query(() => Profile)
   fetchUser(
     @Context() context: IContext, //
-  ): Promise<IProfile> {
+  ): Promise<Profile> {
     console.log('================');
     console.log(context.req.user);
     console.log('================');
-    return this.usersService.findOneById({ id: Number(context.req.user.id) });
+    return this.usersService.findProfile({ id: Number(context.req.user.id) });
   }
 
   @Mutation(() => Boolean)
-  signUp(
-    @Args('email') email: string,
-    @Args('password') password: string,
-    @Args('name') name: string,
+  createUser(
+    @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<boolean> {
-    return this.usersService.create({ email, password, name });
+    return this.usersService.createUser({ createUserInput });
+  }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Profile)
+  updateUser(
+    @Context() context: IContext, //
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ): Promise<Profile> {
+    console.log('update user resolver');
+    console.log(updateUserInput);
+    console.log(context.req.user);
+
+    return this.usersService.updateUser({
+      id: Number(context.req.user.id),
+      updateUserInput,
+    });
   }
 }

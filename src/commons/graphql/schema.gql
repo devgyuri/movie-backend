@@ -117,7 +117,7 @@ type Profile {
   id: Int!
   email: String!
   name: String!
-  picture: String
+  picture: String!
 }
 
 type AccessToken {
@@ -144,8 +144,22 @@ type Mutation {
   loginUser(email: String!, password: String!): AccessToken!
   logoutUser: String!
   restoreAccessToken: AccessToken!
-  signUp(email: String!, password: String!, name: String!): Boolean!
+  createUser(createUserInput: CreateUserInput!): Boolean!
+  updateUser(updateUserInput: UpdateUserInput!): Profile!
   initializeTable: String!
   createLike(userId: Int!, movieId: String!): Boolean!
   deleteLike(userId: Int!, movieId: String!): Boolean!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  name: String
+  email: String
+  password: String
+  picture: String
 }
