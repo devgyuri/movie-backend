@@ -46,4 +46,11 @@ export class UsersResolver {
       updateUserInput,
     });
   }
+
+  @Query(() => Boolean)
+  nameDuplicationCheck(
+    @Args('name') name: string, //
+  ): Promise<boolean> {
+    return this.usersService.isDuplicatedName({ name });
+  }
 }

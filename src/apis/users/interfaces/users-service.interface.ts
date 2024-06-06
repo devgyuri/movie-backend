@@ -9,6 +9,10 @@ export interface IUsersServiceFindOneById {
   id: number;
 }
 
+export interface IUsersServiceFindOneByName {
+  name: string;
+}
+
 export interface IUsersServiceFindOneByEmail {
   email: string;
 }
@@ -22,4 +26,10 @@ export interface IUsersServiceUpdateUser {
   updateUserInput: UpdateUserInput;
 }
 
-// export type IProfile = Omit<User, 'password' | 'likes' | 'comments'>;
+export interface IUsersServiceIsDuplicatedName {
+  name: string;
+}
+
+export interface IUsersServiceIsDuplicatedEmail {
+  email: string;
+}

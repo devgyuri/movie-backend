@@ -128,6 +128,7 @@ type Query {
   fetchActor: String!
   fetchActorImage(name: String!): String!
   fetchUser: Profile!
+  nameDuplicationCheck(name: String!): Boolean!
   fetchBoxOffice(date: String!): [Movie!]!
   fetchMovie(id: String!): Movie!
   fetchBoxOfficeToMovie: String!

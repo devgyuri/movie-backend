@@ -1,9 +1,16 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Comment } from 'src/apis/comments/entities/comment.entity';
 import { Like } from 'src/apis/likes/entities/like.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 
 @Entity()
+@Unique(['email'])
 @ObjectType()
 export class User {
   @PrimaryGeneratedColumn()
@@ -22,7 +29,7 @@ export class User {
   @Field(() => String)
   name: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100 })
   @Field(() => String)
   picture: string;
 

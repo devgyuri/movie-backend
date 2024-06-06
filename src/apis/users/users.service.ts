@@ -8,6 +8,8 @@ import {
   IUsersServiceFindOneByEmail,
   IUsersServiceFindProfile,
   IUsersServiceUpdateUser,
+  IUsersServiceFindOneByName,
+  IUsersServiceIsDuplicatedName,
 } from './interfaces/users-service.interface';
 import * as bcrypt from 'bcrypt';
 import { Profile } from './dto/profile';
@@ -32,6 +34,12 @@ export class UsersService {
   findOneById({ id }: IUsersServiceFindOneById): Promise<User> {
     return this.usersRepository.findOne({
       where: { id },
+    });
+  }
+
+  findOneByName({ name }: IUsersServiceFindOneByName): Promise<User> {
+    return this.usersRepository.findOne({
+      where: { name },
     });
   }
 
@@ -76,5 +84,13 @@ export class UsersService {
       picture: result.picture,
       email: result.email,
     };
+  }
+
+  async isDuplicatedName({
+    name,
+  }: IUsersServiceIsDuplicatedName): Promise<boolean> {
+    const result = await this.findOneByName({ name });
+
+    return result !== null;
   }
 }
