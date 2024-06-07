@@ -10,9 +10,12 @@ import {
   IUsersServiceUpdateUser,
   IUsersServiceFindOneByName,
   IUsersServiceIsDuplicatedName,
+  IUsersServiceUploadPicture,
 } from './interfaces/users-service.interface';
 import * as bcrypt from 'bcrypt';
 import { Profile } from './dto/profile';
+import { Url } from './dto/url';
+import { Storage } from '@google-cloud/storage';
 
 @Injectable()
 export class UsersService {
@@ -92,5 +95,32 @@ export class UsersService {
     const result = await this.findOneByName({ name });
 
     return result !== null;
+  }
+
+  async uploadPicture({
+    id,
+    picture,
+  }: IUsersServiceUploadPicture): Promise<Url> {
+    console.log(picture);
+
+    const user = await this.findOneById({ id });
+
+    const storage = new Storage({
+      projectId: 'glassy-song-425702',
+      keyFilename: 'glassy-song-425702-j8-27ad38cad9b7.json',
+    }).bucket('example121232');
+
+    picture
+      .createReadStream()
+      .pipe(storage.file(picture.filename).createWriteStream())
+      .on('finish', () => {
+        console.log('업로드 성공');
+      })
+      .on('error', () => {
+        console.log('업로드 실패');
+      });
+    console.log('파일 전송이 완료되었습니다.');
+
+    return { url: picture.filename };
   }
 }

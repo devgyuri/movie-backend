@@ -1,3 +1,4 @@
+import { FileUpload } from 'graphql-upload';
 import { CreateUserInput } from '../dto/create-user.input';
 import { UpdateUserInput } from '../dto/update-user.input';
 
@@ -32,4 +33,9 @@ export interface IUsersServiceIsDuplicatedName {
 
 export interface IUsersServiceIsDuplicatedEmail {
   email: string;
+}
+
+export interface IUsersServiceUploadPicture {
+  id: number;
+  picture: FileUpload;
 }

@@ -120,6 +120,10 @@ type Profile {
   picture: String!
 }
 
+type Url {
+  url: String!
+}
+
 type AccessToken {
   accessToken: String!
 }
@@ -147,6 +151,7 @@ type Mutation {
   restoreAccessToken: AccessToken!
   createUser(createUserInput: CreateUserInput!): Boolean!
   updateUser(updateUserInput: UpdateUserInput!): Profile!
+  uploadPicture(picture: Upload!): Url!
   initializeTable: String!
   createLike(userId: Int!, movieId: String!): Boolean!
   deleteLike(userId: Int!, movieId: String!): Boolean!
@@ -164,3 +169,6 @@ input UpdateUserInput {
   password: String
   picture: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload

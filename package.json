@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@apollo/server": "^4.10.1",
+    "@google-cloud/storage": "^7.11.1",
     "@nestjs/apollo": "^12.1.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.0",
@@ -36,6 +37,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "graphql": "^16.8.1",
+    "graphql-upload": "^13.0.0",
     "mkcert": "^3.2.0",
     "mysql2": "^3.9.2",
     "passport": "^0.7.0",
@@ -50,6 +52,7 @@
     "@nestjs/testing": "^10.0.0",
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.17",
+    "@types/graphql-upload": "^8.0.2",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
     "@types/passport-jwt": "^4.0.1",

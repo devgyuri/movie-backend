@@ -6,6 +6,8 @@ import { IContext } from 'src/commons/interfaces/context';
 import { Profile } from './dto/profile';
 import { UpdateUserInput } from './dto/update-user.input';
 import { CreateUserInput } from './dto/create-user.input';
+import { Url } from './dto/url';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 @Resolver()
 export class UsersResolver {
@@ -52,5 +54,17 @@ export class UsersResolver {
     @Args('name') name: string, //
   ): Promise<boolean> {
     return this.usersService.isDuplicatedName({ name });
+  }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Url)
+  uploadPicture(
+    @Context() context: IContext, //
+    @Args('picture', { type: () => GraphQLUpload }) picture: FileUpload,
+  ): Promise<Url> {
+    return this.usersService.uploadPicture({
+      id: Number(context.req.user.id),
+      picture,
+    });
   }
 }
