@@ -124,7 +124,12 @@ type Url {
   url: String!
 }
 
-type AccessToken {
+type AuthInfo {
+  accessToken: String!
+  profile: Profile!
+}
+
+type Token {
   accessToken: String!
 }
 
@@ -146,9 +151,9 @@ type Query {
 
 type Mutation {
   updateActorImage(id: Float!, url: String!): Actor!
-  loginUser(email: String!, password: String!): AccessToken!
+  loginUser(email: String!, password: String!): AuthInfo!
   logoutUser: String!
-  restoreAccessToken: AccessToken!
+  restoreAccessToken: Token!
   createUser(createUserInput: CreateUserInput!): Boolean!
   updateUser(updateUserInput: UpdateUserInput!): Profile!
   uploadPicture(picture: Upload!): Url!

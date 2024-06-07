@@ -11,6 +11,8 @@ import {
   IAuthServiceRemoveRefreshToken,
   IAuthServiceLogout,
 } from './interfaces/auth-service.interface';
+import { AuthInfo } from './dto/authInfo';
+import { Token } from './dto/token';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +25,7 @@ export class AuthService {
     email,
     password,
     context,
-  }: IAuthServiceLogin): Promise<IAccessToken> {
+  }: IAuthServiceLogin): Promise<AuthInfo> {
     const user = await this.usersService.findOneByEmail({ email });
 
     if (!user) {
@@ -37,10 +39,20 @@ export class AuthService {
 
     this.setRefreshToken({ user, context });
     console.log('refresh token');
-    return this.getAccessToken({ user });
+
+    const result = await this.getAccessToken({ user });
+    return {
+      accessToken: result.accessToken,
+      profile: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        picture: user.picture,
+      },
+    };
   }
 
-  getAccessToken({ user }: IAuthServiceGetAccessToken): IAccessToken {
+  getAccessToken({ user }: IAuthServiceGetAccessToken): Token {
     return {
       accessToken: this.jwtService.sign(
         { sub: user.id }, //
@@ -49,7 +61,7 @@ export class AuthService {
     };
   }
 
-  restoreAccessToken({ user }: IAuthServiceRestoreAccessToken): IAccessToken {
+  restoreAccessToken({ user }: IAuthServiceRestoreAccessToken): Token {
     return this.getAccessToken({ user });
   }
 

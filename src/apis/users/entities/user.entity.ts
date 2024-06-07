@@ -29,7 +29,7 @@ export class User {
   @Field(() => String)
   name: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, default: '' })
   @Field(() => String)
   picture: string;
 

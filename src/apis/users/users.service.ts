@@ -76,9 +76,12 @@ export class UsersService {
 
     const prevUser = await this.findOneById({ id });
 
+    const hashedPassword = await bcrypt.hash(updateUserInput.password, 10);
+
     const result = await this.usersRepository.save({
       ...prevUser,
       ...updateUserInput,
+      password: hashedPassword,
     });
 
     return {

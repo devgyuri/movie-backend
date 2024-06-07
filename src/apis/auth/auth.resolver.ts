@@ -3,8 +3,9 @@ import { AuthService } from './auth.service';
 import { IContext } from 'src/commons/interfaces/context';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
-import { AccessToken } from './dto/access-token.output';
 import { IAccessToken } from './interfaces/auth-service.interface';
+import { AuthInfo } from './dto/authInfo';
+import { Token } from './dto/token';
 
 @Resolver()
 export class AuthResolver {
@@ -12,12 +13,12 @@ export class AuthResolver {
     private readonly authService: AuthService, //
   ) {}
 
-  @Mutation(() => AccessToken)
+  @Mutation(() => AuthInfo)
   loginUser(
     @Args('email') email: string, //
     @Args('password') password: string,
     @Context() context: IContext,
-  ): Promise<IAccessToken> {
+  ): Promise<AuthInfo> {
     return this.authService.loginUser({ email, password, context });
   }
 
@@ -27,10 +28,10 @@ export class AuthResolver {
   }
 
   @UseGuards(GqlAuthGuard('refresh'))
-  @Mutation(() => AccessToken)
+  @Mutation(() => Token)
   restoreAccessToken(
     @Context() context: IContext, //
-  ): IAccessToken {
+  ): Token {
     return this.authService.restoreAccessToken({
       user: context.req.user,
     });
