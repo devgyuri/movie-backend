@@ -1,8 +1,15 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { Movie } from 'src/apis/movies/entities/movie.entity';
 import { User } from 'src/apis/users/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 
+@Unique(['user', 'movie'])
 @Entity()
 @ObjectType()
 export class Comment {

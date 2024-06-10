@@ -16,6 +16,7 @@ import { UsersModule } from './apis/users/users.module';
 import { AuthModule } from './apis/auth/auth.module';
 import { LikesModule } from './apis/likes/likes.module';
 import { SeenModule } from './apis/seen/seen.module';
+import { CommentsModule } from './apis/comments/comments.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SeenModule } from './apis/seen/seen.module';
     AuthModule,
     BoxOfficeModule,
     BoxOfficeToMovieModule,
+    CommentsModule,
     DirectorsModule,
     GenresModule,
     LikesModule,

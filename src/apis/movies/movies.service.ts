@@ -16,6 +16,7 @@ import {
   IMoviesServiceFindMovieById,
   IMoviesServiceGetTmdbImageUrl,
   IMoviesServiceUpdateMovie,
+  IMoviesServiceUpdateStar,
 } from './interfaces/movies-service.interface';
 import { ActorsService } from '../actors/actors.service';
 import { DirectorsService } from '../directors/directors.service';
@@ -422,5 +423,24 @@ export class MoviesService {
       ...updateInput,
     });
     return result;
+  }
+
+  async updateStar({
+    id,
+    star,
+    isCreate,
+  }: IMoviesServiceUpdateStar): Promise<Movie> {
+    const prevMovie = await this.findMovieById({ id });
+
+    const sum_star =
+      prevMovie.avg_star * prevMovie.cnt_star + (isCreate ? star : -star);
+    const cnt_star = prevMovie.cnt_star + (isCreate ? 1 : -1);
+    const avg_star = sum_star / cnt_star;
+
+    return this.moviesRepository.save({
+      id,
+      avg_star,
+      cnt_star,
+    });
   }
 }

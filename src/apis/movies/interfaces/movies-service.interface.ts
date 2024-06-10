@@ -77,3 +77,9 @@ export interface IMoviesServiceFindMovieByTitleAndRlsDt {
 export interface IMoviesServiceFindMovieById {
   id: string;
 }
+
+export interface IMoviesServiceUpdateStar {
+  id: string;
+  star: number;
+  isCreate: boolean;
+}

@@ -141,6 +141,7 @@ type Query {
   fetchBoxOffice(date: String!): [Movie!]!
   fetchMovie(id: String!): Movie!
   fetchBoxOfficeToMovie: String!
+  FetchComment: String!
   fetchLike(userId: Int!, movieId: String!): Boolean!
   fetchLikeCountByMovie(movieId: String!): Int!
   fetchPoster: String!
@@ -158,6 +159,8 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): Profile!
   uploadPicture(picture: Upload!): Url!
   initializeTable: String!
+  CreateComment(createCommentInput: CreateCommentInput!): Comment!
+  DeleteComment(movieId: String!): Boolean!
   createLike(userId: Int!, movieId: String!): Boolean!
   deleteLike(userId: Int!, movieId: String!): Boolean!
 }
@@ -177,3 +180,10 @@ input UpdateUserInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input CreateCommentInput {
+  contents: String!
+  created_at: DateTime!
+  star: Float!
+  movieId: String!
+}
