@@ -5,6 +5,7 @@ import {
   ICommentsServiceCreateComment,
   ICommentsServiceDeleteComment,
   ICommentsServiceFindCommentByUserAndMovie,
+  ICommentsServiceFindCommentsByMovie,
 } from './interfaces/commnets-service.interface';
 import { MoviesService } from '../movies/movies.service';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,10 +30,22 @@ export class CommentsService {
     });
   }
 
+  findCommentsByMovie({
+    movieId,
+  }: ICommentsServiceFindCommentsByMovie): Promise<Comment[]> {
+    return this.commentsRepository.find({
+      where: {
+        movie: {
+          id: movieId,
+        },
+      },
+    });
+  }
+
   async createComment({
     userId,
     createCommentInput,
-  }: ICommentsServiceCreateComment): Promise<Comment> {
+  }: ICommentsServiceCreateComment): Promise<void> {
     await this.moviesService.updateStar({
       id: createCommentInput.movieId,
       star: createCommentInput.star,
@@ -41,7 +54,7 @@ export class CommentsService {
 
     const { movieId, ...commentInput } = createCommentInput;
 
-    return this.commentsRepository.save({
+    await this.commentsRepository.save({
       ...commentInput,
       movie: {
         id: movieId,

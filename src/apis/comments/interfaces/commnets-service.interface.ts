@@ -5,6 +5,10 @@ export interface ICommentsServiceFindCommentByUserAndMovie {
   movieId: string;
 }
 
+export interface ICommentsServiceFindCommentsByMovie {
+  movieId: string;
+}
+
 export interface ICommentsServiceCreateComment {
   userId: number;
   createCommentInput: CreateCommentInput;

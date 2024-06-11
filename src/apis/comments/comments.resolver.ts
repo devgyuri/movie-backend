@@ -13,25 +13,33 @@ export class CommentsResolver {
   ) {}
 
   @Query(() => String)
-  FetchComment(): string {
+  fetchComment(): string {
     return 'dummy fetch comment';
   }
 
+  @Query(() => [Comment])
+  fetchComments(
+    @Args('movieId') movieId: string, //
+  ): Promise<Comment[]> {
+    return this.commentsService.findCommentsByMovie({ movieId });
+  }
+
   @UseGuards(GqlAuthGuard('access'))
-  @Mutation(() => Comment)
-  CreateComment(
+  @Mutation(() => String)
+  async createComment(
     @Context() context: IContext, //
     @Args('createCommentInput') createCommentInput: CreateCommentInput,
-  ): Promise<Comment> {
-    return this.commentsService.createComment({
+  ): Promise<string> {
+    await this.commentsService.createComment({
       userId: Number(context.req.user.id),
       createCommentInput,
     });
+    return 'hello';
   }
 
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => Boolean)
-  DeleteComment(
+  deleteComment(
     @Context() context: IContext,
     @Args('movieId') movieId: string,
   ): Promise<boolean> {
