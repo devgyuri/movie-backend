@@ -133,6 +133,10 @@ type Token {
   accessToken: String!
 }
 
+type Id {
+  id: Int!
+}
+
 type Query {
   fetchActor: String!
   fetchActorImage(name: String!): String!
@@ -160,8 +164,8 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): Profile!
   uploadPicture(picture: Upload!): Url!
   initializeTable: String!
-  createComment(createCommentInput: CreateCommentInput!): String!
-  deleteComment(movieId: String!): Boolean!
+  createComment(createCommentInput: CreateCommentInput!): Comment!
+  deleteComment(commentId: Int!): Id!
   createLike(userId: Int!, movieId: String!): Boolean!
   deleteLike(userId: Int!, movieId: String!): Boolean!
 }

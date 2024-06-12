@@ -1,10 +1,11 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Comment } from './entities/comment.entity';
 import { IContext } from 'src/commons/interfaces/context';
 import { CreateCommentInput } from './dto/create-comment.input';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
+import { Id } from './dto/id';
 
 @Resolver()
 export class CommentsResolver {
@@ -25,27 +26,24 @@ export class CommentsResolver {
   }
 
   @UseGuards(GqlAuthGuard('access'))
-  @Mutation(() => String)
-  async createComment(
+  @Mutation(() => Comment)
+  createComment(
     @Context() context: IContext, //
     @Args('createCommentInput') createCommentInput: CreateCommentInput,
-  ): Promise<string> {
-    await this.commentsService.createComment({
+  ): Promise<Comment> {
+    return this.commentsService.createComment({
       userId: Number(context.req.user.id),
       createCommentInput,
     });
-    return 'hello';
   }
 
   @UseGuards(GqlAuthGuard('access'))
-  @Mutation(() => Boolean)
+  @Mutation(() => Id)
   deleteComment(
-    @Context() context: IContext,
-    @Args('movieId') movieId: string,
-  ): Promise<boolean> {
+    @Args('commentId', { type: () => Int }) commentId: number,
+  ): Promise<Id> {
     return this.commentsService.deleteComment({
-      userId: Number(context.req.user.id),
-      movieId,
+      commentId,
     });
   }
 }

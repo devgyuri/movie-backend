@@ -29,11 +29,11 @@ export class Comment {
   @Field(() => Float)
   star: number;
 
-  @ManyToOne(() => User, (user) => user.comments)
+  @ManyToOne(() => User, (user) => user.comments, { eager: true })
   @Field(() => User)
   user: User;
 
-  @ManyToOne(() => Movie, (movie) => movie.comments)
+  @ManyToOne(() => Movie, (movie) => movie.comments, { eager: true })
   @Field(() => Movie)
   movie: Movie;
 }

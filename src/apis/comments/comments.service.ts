@@ -4,11 +4,13 @@ import { Comment } from './entities/comment.entity';
 import {
   ICommentsServiceCreateComment,
   ICommentsServiceDeleteComment,
+  ICommentsServiceFindCommentById,
   ICommentsServiceFindCommentByUserAndMovie,
   ICommentsServiceFindCommentsByMovie,
 } from './interfaces/commnets-service.interface';
 import { MoviesService } from '../movies/movies.service';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Id } from './dto/id';
 
 @Injectable()
 export class CommentsService {
@@ -17,6 +19,16 @@ export class CommentsService {
     private readonly commentsRepository: Repository<Comment>, //
     private readonly moviesService: MoviesService,
   ) {}
+
+  findCommentById({
+    commentId,
+  }: ICommentsServiceFindCommentById): Promise<Comment> {
+    return this.commentsRepository.findOne({
+      where: {
+        id: commentId,
+      },
+    });
+  }
 
   findCommentByUserAndMovie({
     userId,
@@ -45,7 +57,7 @@ export class CommentsService {
   async createComment({
     userId,
     createCommentInput,
-  }: ICommentsServiceCreateComment): Promise<void> {
+  }: ICommentsServiceCreateComment): Promise<Comment> {
     await this.moviesService.updateStar({
       id: createCommentInput.movieId,
       star: createCommentInput.star,
@@ -54,7 +66,7 @@ export class CommentsService {
 
     const { movieId, ...commentInput } = createCommentInput;
 
-    await this.commentsRepository.save({
+    return this.commentsRepository.save({
       ...commentInput,
       movie: {
         id: movieId,
@@ -66,18 +78,17 @@ export class CommentsService {
   }
 
   async deleteComment({
-    userId,
-    movieId,
-  }: ICommentsServiceDeleteComment): Promise<boolean> {
-    const comment = await this.findCommentByUserAndMovie({ userId, movieId });
+    commentId,
+  }: ICommentsServiceDeleteComment): Promise<Id> {
+    const comment = await this.findCommentById({ commentId });
 
     await this.moviesService.updateStar({
-      id: movieId,
+      id: comment.movie.id,
       star: comment.star,
       isCreate: false,
     });
 
-    const result = await this.commentsRepository.delete({ id: comment.id });
-    return result != null;
+    await this.commentsRepository.delete({ id: commentId });
+    return { id: commentId };
   }
 }

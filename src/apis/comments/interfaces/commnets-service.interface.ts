@@ -1,5 +1,9 @@
 import { CreateCommentInput } from '../dto/create-comment.input';
 
+export interface ICommentsServiceFindCommentById {
+  commentId: number;
+}
+
 export interface ICommentsServiceFindCommentByUserAndMovie {
   userId: number;
   movieId: string;
@@ -15,6 +19,5 @@ export interface ICommentsServiceCreateComment {
 }
 
 export interface ICommentsServiceDeleteComment {
-  userId: number;
-  movieId: string;
+  commentId: number;
 }
