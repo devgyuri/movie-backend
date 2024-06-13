@@ -6,6 +6,7 @@ import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Id } from './dto/id';
+import { UpdateCommentInput } from './dto/update-comment.input';
 
 @Resolver()
 export class CommentsResolver {
@@ -34,6 +35,18 @@ export class CommentsResolver {
     return this.commentsService.createComment({
       userId: Number(context.req.user.id),
       createCommentInput,
+    });
+  }
+
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Comment)
+  updateComment(
+    @Context() context: IContext, //
+    @Args('updateCommentInput') updateCommentInput: UpdateCommentInput,
+  ): Promise<Comment> {
+    return this.commentsService.updateComment({
+      userId: Number(context.req.user.id),
+      updateCommentInput,
     });
   }
 

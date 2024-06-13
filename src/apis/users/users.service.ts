@@ -100,13 +100,10 @@ export class UsersService {
     return result !== null;
   }
 
-  async uploadPicture({
-    id,
-    picture,
-  }: IUsersServiceUploadPicture): Promise<Url> {
+  async uploadPicture({ picture }: IUsersServiceUploadPicture): Promise<Url> {
     console.log(picture);
 
-    const user = await this.findOneById({ id });
+    // const user = await this.findOneById({ id });
 
     const storage = new Storage({
       projectId: 'glassy-song-425702',

@@ -7,7 +7,6 @@ import {
   IAuthServiceLogin,
   IAuthServiceRestoreAccessToken,
   IAuthServiceSetRefreshToken,
-  IAccessToken,
   IAuthServiceRemoveRefreshToken,
   IAuthServiceLogout,
 } from './interfaces/auth-service.interface';

@@ -36,6 +36,5 @@ export interface IUsersServiceIsDuplicatedEmail {
 }
 
 export interface IUsersServiceUploadPicture {
-  id: number;
   picture: FileUpload;
 }

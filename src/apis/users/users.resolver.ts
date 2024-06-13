@@ -63,7 +63,6 @@ export class UsersResolver {
     @Args('picture', { type: () => GraphQLUpload }) picture: FileUpload,
   ): Promise<Url> {
     return this.usersService.uploadPicture({
-      id: Number(context.req.user.id),
       picture,
     });
   }

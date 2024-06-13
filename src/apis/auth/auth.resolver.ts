@@ -3,7 +3,6 @@ import { AuthService } from './auth.service';
 import { IContext } from 'src/commons/interfaces/context';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
-import { IAccessToken } from './interfaces/auth-service.interface';
 import { AuthInfo } from './dto/authInfo';
 import { Token } from './dto/token';
 

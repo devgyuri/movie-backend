@@ -1,5 +1,8 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { LikesService } from './likes.service';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { UseGuards } from '@nestjs/common';
+import { IContext } from 'src/commons/interfaces/context';
 
 @Resolver()
 export class LikesResolver {
@@ -7,32 +10,38 @@ export class LikesResolver {
     private readonly likesService: LikesService, //
   ) {}
 
+  @UseGuards(GqlAuthGuard('access'))
   @Query(() => Boolean)
   fetchLike(
-    @Args('userId', { type: () => Int }) userId: number, //
+    @Context() context: IContext, //
     @Args('movieId') movieId: string,
   ): Promise<boolean> {
-    return this.likesService.findByUserAndMovie({ userId, movieId });
-  }
-
-  @Mutation(() => Boolean)
-  createLike(
-    @Args('userId', { type: () => Int }) userId: number, //
-    @Args('movieId') movieId: string,
-  ): Promise<boolean> {
-    return this.likesService.createLike({
-      userId,
+    return this.likesService.findByUserAndMovie({
+      userId: Number(context.req.user.id),
       movieId,
     });
   }
 
+  @UseGuards(GqlAuthGuard('access'))
+  @Mutation(() => Boolean)
+  createLike(
+    @Context() context: IContext, //
+    @Args('movieId') movieId: string,
+  ): Promise<boolean> {
+    return this.likesService.createLike({
+      userId: Number(context.req.user.id),
+      movieId,
+    });
+  }
+
+  @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => Boolean)
   deleteLike(
-    @Args('userId', { type: () => Int }) userId: number, //
+    @Context() context: IContext, //
     @Args('movieId') movieId: string,
   ): Promise<boolean> {
     return this.likesService.deleteLike({
-      userId,
+      userId: Number(context.req.user.id),
       movieId,
     });
   }
