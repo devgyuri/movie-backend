@@ -150,7 +150,6 @@ type Query {
   fetchLike(movieId: String!): Boolean!
   fetchLikeCountByMovie(movieId: String!): Int!
   fetchPoster: String!
-  fetchSeen(userId: Float!, movieId: String!): Boolean!
   fetchStill: String!
   fetchVod: String!
 }
