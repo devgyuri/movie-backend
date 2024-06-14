@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity';
 import {
@@ -82,17 +82,25 @@ export class CommentsService {
     userId,
     updateCommentInput,
   }: ICommentsServiceUpdateComment): Promise<Comment> {
-    const { movieId, ...commentInput } = updateCommentInput;
-
-    return this.commentsRepository.save({
-      ...commentInput,
-      movie: {
-        id: movieId,
-      },
-      user: {
-        id: userId,
-      },
+    const prevComment = await this.findCommentById({
+      commentId: updateCommentInput.id,
     });
+
+    if (userId !== prevComment.user.id) {
+      throw new ForbiddenException('작성자만 수정이 가능합니다.');
+    }
+
+    const result = await this.commentsRepository.save({
+      ...prevComment,
+      user: {
+        ...prevComment.user,
+      },
+      movie: {
+        ...prevComment.movie,
+      },
+      ...updateCommentInput,
+    });
+    return result;
   }
 
   async deleteComment({

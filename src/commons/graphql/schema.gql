@@ -197,6 +197,5 @@ input CreateCommentInput {
 input UpdateCommentInput {
   contents: String
   star: Float
-  movieId: String
   id: Int!
 }
