@@ -12,6 +12,7 @@ import {
 import { MoviesService } from '../movies/movies.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Id } from './dto/id';
+import { UPDATE_STAR_STATUS_ENUM } from '../movies/interfaces/movies-service.interface';
 
 @Injectable()
 export class CommentsService {
@@ -62,7 +63,7 @@ export class CommentsService {
     await this.moviesService.updateStar({
       id: createCommentInput.movieId,
       star: createCommentInput.star,
-      isCreate: true,
+      updateStatus: UPDATE_STAR_STATUS_ENUM.CREATE,
     });
 
     const { movieId, ...commentInput } = createCommentInput;
@@ -90,7 +91,13 @@ export class CommentsService {
       throw new ForbiddenException('작성자만 수정이 가능합니다.');
     }
 
-    const result = await this.commentsRepository.save({
+    await this.moviesService.updateStar({
+      id: prevComment.movie.id,
+      star: (updateCommentInput.star ?? prevComment.star) - prevComment.star,
+      updateStatus: UPDATE_STAR_STATUS_ENUM.UPDATE,
+    });
+
+    return this.commentsRepository.save({
       ...prevComment,
       user: {
         ...prevComment.user,
@@ -100,7 +107,6 @@ export class CommentsService {
       },
       ...updateCommentInput,
     });
-    return result;
   }
 
   async deleteComment({
@@ -110,8 +116,8 @@ export class CommentsService {
 
     await this.moviesService.updateStar({
       id: comment.movie.id,
-      star: comment.star,
-      isCreate: false,
+      star: -comment.star,
+      updateStatus: UPDATE_STAR_STATUS_ENUM.DELETE,
     });
 
     await this.commentsRepository.delete({ id: commentId });

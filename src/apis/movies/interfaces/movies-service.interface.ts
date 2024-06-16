@@ -81,5 +81,11 @@ export interface IMoviesServiceFindMovieById {
 export interface IMoviesServiceUpdateStar {
   id: string;
   star: number;
-  isCreate: boolean;
+  updateStatus: UPDATE_STAR_STATUS_ENUM;
+}
+
+export enum UPDATE_STAR_STATUS_ENUM {
+  CREATE,
+  UPDATE,
+  DELETE,
 }
