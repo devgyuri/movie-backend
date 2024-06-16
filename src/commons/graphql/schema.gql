@@ -150,6 +150,8 @@ type Query {
   fetchLike(movieId: String!): Boolean!
   fetchLikeCountByMovie(movieId: String!): Int!
   fetchPoster: String!
+  fetchSeen(movieId: String!): Boolean!
+  fetchSeenCountByMovie(movieId: String!): Int!
   fetchStill: String!
   fetchVod: String!
 }
@@ -168,6 +170,8 @@ type Mutation {
   deleteComment(commentId: Int!): Id!
   createLike(movieId: String!): Boolean!
   deleteLike(movieId: String!): Boolean!
+  createSeen(movieId: String!): Boolean!
+  deleteSeen(movieId: String!): Boolean!
 }
 
 input CreateUserInput {

@@ -12,7 +12,7 @@ export class SeenResolver {
 
   @UseGuards(GqlAuthGuard('access'))
   @Query(() => Boolean)
-  fetchLike(
+  fetchSeen(
     @Context() context: IContext, //
     @Args('movieId') movieId: string,
   ): Promise<boolean> {
@@ -24,7 +24,7 @@ export class SeenResolver {
 
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => Boolean)
-  createLike(
+  createSeen(
     @Context() context: IContext, //
     @Args('movieId') movieId: string,
   ): Promise<boolean> {
@@ -36,7 +36,7 @@ export class SeenResolver {
 
   @UseGuards(GqlAuthGuard('access'))
   @Mutation(() => Boolean)
-  deleteLike(
+  deleteSeen(
     @Context() context: IContext, //
     @Args('movieId') movieId: string,
   ): Promise<boolean> {
@@ -47,7 +47,7 @@ export class SeenResolver {
   }
 
   @Query(() => Int)
-  fetchLikeCountByMovie(
+  fetchSeenCountByMovie(
     @Args('movieId') movieId: string, //
   ): Promise<number> {
     return this.seenService.fetchSeenCountByMovie({
