@@ -8,6 +8,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { CreateUserInput } from './dto/create-user.input';
 import { Url } from './dto/url';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { User } from './entities/user.entity';
 
 @Resolver()
 export class UsersResolver {
@@ -29,7 +30,7 @@ export class UsersResolver {
   @Mutation(() => Boolean)
   createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
-  ): Promise<boolean> {
+  ): Promise<User> {
     return this.usersService.createUser({ createUserInput });
   }
 

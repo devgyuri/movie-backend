@@ -52,7 +52,7 @@ export class UsersService {
 
   async createUser({
     createUserInput: createUserInput,
-  }: IUsersServiceCreateUser): Promise<boolean> {
+  }: IUsersServiceCreateUser): Promise<User> {
     const user = await this.findOneByEmail({ email: createUserInput.email });
     if (user) {
       throw new ConflictException('이미 등록한 이메일입니다.');
@@ -60,12 +60,10 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(createUserInput.password, 10);
 
-    const result = await this.usersRepository.save({
+    return await this.usersRepository.save({
       ...createUserInput,
       password: hashedPassword,
     });
-
-    return result !== null;
   }
 
   async updateUser({

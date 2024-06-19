@@ -9,6 +9,7 @@ import {
   IAuthServiceSetRefreshToken,
   IAuthServiceRemoveRefreshToken,
   IAuthServiceLogout,
+  IAuthServiceLoginOAuth,
 } from './interfaces/auth-service.interface';
 import { AuthInfo } from './dto/authInfo';
 import { Token } from './dto/token';
@@ -36,7 +37,7 @@ export class AuthService {
       throw new UnprocessableEntityException('비밀번호가 일치하지 않습니다.');
     }
 
-    this.setRefreshToken({ user, context });
+    this.setRefreshToken({ user, res: context.res });
     console.log('refresh token');
 
     const result = await this.getAccessToken({ user });
@@ -49,6 +50,20 @@ export class AuthService {
         picture: user.picture,
       },
     };
+  }
+
+  async loginOAuth({ req, res }: IAuthServiceLoginOAuth) {
+    let user = await this.usersService.findOneByEmail({
+      email: req.user.email,
+    });
+
+    if (!user)
+      user = await this.usersService.createUser({
+        createUserInput: { ...req.user },
+      });
+
+    this.setRefreshToken({ user, res });
+    res.redirect('http://localhost:3000/login');
   }
 
   getAccessToken({ user }: IAuthServiceGetAccessToken): Token {
@@ -64,17 +79,14 @@ export class AuthService {
     return this.getAccessToken({ user });
   }
 
-  setRefreshToken({ user, context }: IAuthServiceSetRefreshToken): void {
+  setRefreshToken({ user, res }: IAuthServiceSetRefreshToken): void {
     const refreshToken = this.jwtService.sign(
       { sub: user.id },
       { secret: process.env.REFRESH_TOKEN_SECRET, expiresIn: '2w' },
     );
 
     // 개발환경
-    context.res.setHeader(
-      'set-Cookie',
-      `refreshToken=${refreshToken}; path=/;`,
-    );
+    res.setHeader('set-Cookie', `refreshToken=${refreshToken}; path=/;`);
 
     // 배포환경
     // context.res.setHeader(
