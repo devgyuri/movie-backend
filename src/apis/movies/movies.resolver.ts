@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entity';
 
@@ -13,6 +13,14 @@ export class MoviesResolver {
 
   @Query(() => Movie)
   fetchMovie(@Args('id') id: string): Promise<Movie> {
-    return this.moviesService.findMovieById({ id });
+    return this.moviesService.findMovieDetailById({ id });
+  }
+
+  @Query(() => [Movie])
+  fetchMovies(
+    @Args('keyword', { nullable: true }) keyword: string, //
+    @Args('page', { type: () => Int, nullable: true }) page: number,
+  ): Promise<Movie[]> {
+    return this.moviesService.findMovieList({ keyword, page });
   }
 }

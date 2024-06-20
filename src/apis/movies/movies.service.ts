@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Movie } from './entities/movie.entity';
-import { Repository } from 'typeorm';
+import { Like, Or, Repository } from 'typeorm';
 import {
   IMoviesServiceCreateMovieAll,
   IMoviesServiceCreateMovie,
@@ -18,6 +18,8 @@ import {
   IMoviesServiceUpdateMovie,
   IMoviesServiceUpdateStar,
   UPDATE_STAR_STATUS_ENUM,
+  IMoviesServiceFindMovieDetailById,
+  IMoviesServiceFindMovieList,
 } from './interfaces/movies-service.interface';
 import { ActorsService } from '../actors/actors.service';
 import { DirectorsService } from '../directors/directors.service';
@@ -151,28 +153,19 @@ export class MoviesService {
     return [...prevGenres, ...newGenres];
   }
 
-  // 해당 영화를 조회할 때 배우 이미지가 존재하지 않으면 open api로 요청해서 받아오기
-  async findMovieById({ id }: IMoviesServiceFindMovieById): Promise<Movie> {
-    const result = await this.moviesRepository.findOne({
+  findMovieById({ id }: IMoviesServiceFindMovieById): Promise<Movie> {
+    return this.moviesRepository.findOne({
       where: { id },
-      relations: {
-        actors: true,
-      },
     });
+  }
+
+  // 해당 영화를 조회할 때 배우 이미지가 존재하지 않으면 open api로 요청해서 받아오기
+  async findMovieDetailById({
+    id,
+  }: IMoviesServiceFindMovieDetailById): Promise<Movie> {
+    const result = await this.findMovieById({ id });
 
     const prevActors = result.actors;
-    // const newActors = await Promise.all(
-    //   prevActors.map((el: Actor) => {
-    //     if (el.url === '') {
-    //       return {
-    //         ...el,
-    //         url: this.getTmdbImageUrl({ actorName: el.name }),
-    //       };
-    //     } else {
-    //       return el;
-    //     }
-    //   }),
-    // );
     const newActors: Actor[] = [];
     for (let i = 0; i < prevActors.length; i++) {
       if (prevActors[i].url === '') {
@@ -189,19 +182,11 @@ export class MoviesService {
       }
     }
 
-    console.log('========actor url test=========');
-    console.log(newActors);
-
-    return this.moviesRepository.findOne({
-      where: { id },
-      relations: {
-        actors: true,
-        directors: true,
-        genres: true,
-      },
-    });
+    result.actors = newActors;
+    return result;
   }
 
+  // if there is no movie matched condition, create new movie and return
   async findMovieByTitleAndRlsDt({
     title,
     releaseDate,
@@ -227,6 +212,35 @@ export class MoviesService {
     temp.open_dt = stringToDate(releaseDate);
     // return temp;
     return this.createMovieByTitleAndRlsDt({ title, releaseDate });
+  }
+
+  async findMovieList({
+    keyword,
+    page,
+  }: IMoviesServiceFindMovieList): Promise<Movie[]> {
+    console.log('keyword: ', keyword);
+
+    if (keyword) {
+      return this.moviesRepository.find({
+        where: {
+          id: Or(Like('K%'), Like('F%')),
+          title: Like(`%${keyword}%`),
+        },
+        take: 10,
+        skip: ((page ?? 1) - 1) * 10,
+      });
+    }
+
+    return this.moviesRepository.find({
+      where: {
+        id: Or(Like('K%'), Like('F%')),
+      },
+      take: 10,
+      skip: ((page ?? 1) - 1) * 10,
+      order: {
+        open_dt: 'DESC',
+      },
+    });
   }
 
   async createMovieByTitleAndRlsDt({
@@ -260,6 +274,13 @@ export class MoviesService {
     rawData,
   }: IMoviesServiceCreateOpenMovieInfo): Promise<Movie> {
     const id = rawData.DOCID;
+
+    // console.log(rawData.DOCID);
+
+    if (id.charAt(0) !== 'K' && id.charAt(0) !== 'F') {
+      return;
+    }
+
     const title = rawData.title
       .replaceAll('!HS', '')
       .replaceAll('!HE', '')
@@ -307,12 +328,12 @@ export class MoviesService {
     await Promise.all(
       posterUrls.map((el, index) => {
         if (el) {
-          // const shortenedUrl = el.replace(
-          //   'http://file.koreafilm.or.kr/thm/',
-          //   '',
-          // );
+          const shortenedUrl = el.replace(
+            'http://file.koreafilm.or.kr/thm/',
+            '',
+          );
           return this.postersService.createPoster({
-            url: el,
+            url: shortenedUrl,
             movieId: id,
             isRep: index === 0 ? true : false,
           });
@@ -323,12 +344,12 @@ export class MoviesService {
     await Promise.all(
       stillUrls.map((el, index) => {
         if (el) {
-          // const shortenedUrl = el.replace(
-          //   'http://file.koreafilm.or.kr/thm/',
-          //   '',
-          // );
+          const shortenedUrl = el.replace(
+            'http://file.koreafilm.or.kr/thm/',
+            '',
+          );
           return this.stillsService.createStill({
-            url: el,
+            url: shortenedUrl,
             movieId: id,
             isRep: index === 0 ? true : false,
           });
@@ -345,8 +366,13 @@ export class MoviesService {
     await Promise.all(
       vodUrls.map((el, index) => {
         if (el) {
+          const shortenedUrl = el.replace(
+            'https://www.kmdb.or.kr/trailer/trailerPlayPop?pFileNm=',
+            '',
+          );
+
           return this.vodsService.createVod({
-            url: el,
+            url: shortenedUrl,
             movieId: id,
             isRep: index === repVodIdx ? true : false,
           });
@@ -364,7 +390,7 @@ export class MoviesService {
         params: {
           collection: 'kmdb_new2',
           ServiceKey: process.env.KMDB_API_KEY,
-          releaseDts: '20200101',
+          releaseDts: '20160101',
           releaseDte: '20241231',
           sort: 'prodYear,1',
         },
@@ -383,7 +409,7 @@ export class MoviesService {
             ServiceKey: process.env.KMDB_API_KEY,
             // releaseDts: '20190101',
             // releaseDte: '20191231',
-            releaseDts: '20200101',
+            releaseDts: '20160101',
             releaseDte: '20241231',
             sort: 'prodYear,1',
             listCount: batch,

@@ -144,6 +144,7 @@ type Query {
   nameDuplicationCheck(name: String!): Boolean!
   fetchBoxOffice(date: String!): [Movie!]!
   fetchMovie(id: String!): Movie!
+  fetchMovies(keyword: String, page: Int): [Movie!]!
   fetchBoxOfficeToMovie: String!
   fetchComment: String!
   fetchComments(movieId: String!): [Comment!]!

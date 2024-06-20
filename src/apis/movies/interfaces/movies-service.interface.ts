@@ -78,10 +78,19 @@ export interface IMoviesServiceFindMovieById {
   id: string;
 }
 
+export interface IMoviesServiceFindMovieDetailById {
+  id: string;
+}
+
 export interface IMoviesServiceUpdateStar {
   id: string;
   star: number;
   updateStatus: UPDATE_STAR_STATUS_ENUM;
+}
+
+export interface IMoviesServiceFindMovieList {
+  keyword?: string;
+  page?: number;
 }
 
 export enum UPDATE_STAR_STATUS_ENUM {
