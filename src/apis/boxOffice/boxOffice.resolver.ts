@@ -1,13 +1,13 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { BoxOfficeService } from './boxOffice.service';
-import { Movie } from '../movies/entities/movie.entity';
+import { BoxOfficeToMovie } from '../boxOfficeToMovie/entities/boxOfficeToMovie.entity';
 
 @Resolver()
 export class BoxOfficeResolver {
   constructor(private readonly boxOfficeService: BoxOfficeService) {}
 
-  @Query(() => [Movie])
-  fetchBoxOffice(@Args('date') date: string): Promise<Movie[]> {
+  @Query(() => [BoxOfficeToMovie])
+  fetchBoxOffice(@Args('date') date: string): Promise<BoxOfficeToMovie[]> {
     return this.boxOfficeService.getBoxOfficeMovies({ dateString: date });
   }
 }

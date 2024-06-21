@@ -11,15 +11,11 @@ export class BoxOfficeToMovieService {
     private readonly boxOfficeToMovieRepository: Repository<BoxOfficeToMovie>,
   ) {}
 
-  async createBoxOfficeToMovie({
-    boxOffice,
-    movie,
-    rank,
-  }: IBoxOfficeToMovieServiceCreateBoxOfficeToMovie): Promise<BoxOfficeToMovie> {
-    const boxOfficeToMovieInfo = new BoxOfficeToMovie();
-    boxOfficeToMovieInfo.boxOffice = boxOffice;
-    boxOfficeToMovieInfo.movie = movie;
-    boxOfficeToMovieInfo.rank = rank;
-    return this.boxOfficeToMovieRepository.save(boxOfficeToMovieInfo);
+  async createBoxOfficeToMovie(
+    boxOfficeInfo: IBoxOfficeToMovieServiceCreateBoxOfficeToMovie,
+  ): Promise<BoxOfficeToMovie> {
+    return this.boxOfficeToMovieRepository.save({
+      ...boxOfficeInfo,
+    });
   }
 }

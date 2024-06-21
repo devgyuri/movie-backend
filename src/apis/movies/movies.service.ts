@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Movie } from './entities/movie.entity';
 import { Like, Or, Repository } from 'typeorm';
 import {
-  IMoviesServiceCreateMovieAll,
   IMoviesServiceCreateMovie,
   IMoviesServiceInsertActorsInfoArgs,
   IMoviesServiceInsertDirectorsInfoArgs,
@@ -289,7 +288,6 @@ export class MoviesService {
     const dt =
       rawData.repRlsDate.length > 0 ? rawData.repRlsDate : rawData.regDate;
     const open_dt = stringToDate(dt);
-    const audi_acc = Number(rawData.audiAcc ?? 0);
     const rating = Number(rawData.rating.replace(/[^0-9]/g, ''));
     const plot = rawData.plots.plot[0].plotText;
     const runtime = Number(rawData.runtime);
@@ -313,7 +311,6 @@ export class MoviesService {
       id,
       title,
       open_dt,
-      audi_acc,
       rating,
       plot,
       runtime,
@@ -439,11 +436,11 @@ export class MoviesService {
     });
   }
 
-  async createMovieAll({
-    movieArr,
-  }: IMoviesServiceCreateMovieAll): Promise<void> {
-    await this.moviesRepository.insert(movieArr);
-  }
+  // async createMovieAll({
+  //   movieArr,
+  // }: IMoviesServiceCreateMovieAll): Promise<void> {
+  //   await this.moviesRepository.insert(movieArr);
+  // }
 
   async updateMovie(updateInput: IMoviesServiceUpdateMovie): Promise<Movie> {
     const result = await this.moviesRepository.save({

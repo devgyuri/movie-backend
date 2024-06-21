@@ -5,4 +5,5 @@ export interface IBoxOfficeToMovieServiceCreateBoxOfficeToMovie {
   boxOffice: BoxOffice;
   movie: Movie;
   rank: number;
+  audi_acc: number;
 }

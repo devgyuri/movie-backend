@@ -33,10 +33,6 @@ export class Movie {
   @Field(() => Date)
   open_dt: Date;
 
-  @Column({ type: 'int', default: 0 })
-  @Field(() => Int)
-  audi_acc: number;
-
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0.0 })
   @Field(() => Float)
   avg_star: number;

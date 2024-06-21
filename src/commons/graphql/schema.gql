@@ -25,6 +25,7 @@ type BoxOfficeToMovie {
   boxOffice: BoxOffice!
   movie: Movie!
   rank: Int!
+  audi_acc: Int!
 }
 
 type Like {
@@ -95,7 +96,6 @@ type Movie {
   id: String!
   title: String!
   open_dt: DateTime!
-  audi_acc: Int!
   avg_star: Float!
   cnt_star: Int!
   rating: Int!
@@ -142,7 +142,7 @@ type Query {
   fetchActorImage(name: String!): String!
   fetchUser: Profile!
   nameDuplicationCheck(name: String!): Boolean!
-  fetchBoxOffice(date: String!): [Movie!]!
+  fetchBoxOffice(date: String!): [BoxOfficeToMovie!]!
   fetchMovie(id: String!): Movie!
   fetchMovies(keyword: String, page: Int): [Movie!]!
   fetchBoxOfficeToMovie: String!

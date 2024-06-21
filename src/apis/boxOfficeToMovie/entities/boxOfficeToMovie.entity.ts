@@ -21,4 +21,8 @@ export class BoxOfficeToMovie {
   @Column({ type: 'int' })
   @Field(() => Int)
   rank: number;
+
+  @Column({ type: 'int', default: 0 })
+  @Field(() => Int)
+  audi_acc: number;
 }

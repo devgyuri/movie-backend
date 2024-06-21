@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BoxOffice } from './entities/boxOffice.entity';
-import { Movie } from '../movies/entities/movie.entity';
 import {
   IBoxOfficeServiceCreateBoxOffice,
   IBoxOfficeServiceFindByDate,
@@ -13,6 +12,7 @@ import { MoviesService } from '../movies/movies.service';
 import axios from 'axios';
 import { IBoxOfficeList } from 'src/commons/types/bosOffice.types';
 import { BoxOfficeToMovieService } from '../boxOfficeToMovie/boxOfficeToMovie.service';
+import { BoxOfficeToMovie } from '../boxOfficeToMovie/entities/boxOfficeToMovie.entity';
 
 @Injectable()
 export class BoxOfficeService {
@@ -36,7 +36,7 @@ export class BoxOfficeService {
 
   async getBoxOfficeMovies({
     dateString,
-  }: IBoxOfficeServiceGetBoxOfficeMovies): Promise<Movie[]> {
+  }: IBoxOfficeServiceGetBoxOfficeMovies): Promise<BoxOfficeToMovie[]> {
     let boxOfficeResult = await this.findByDate({ dateString });
     console.log(boxOfficeResult);
 
@@ -50,14 +50,13 @@ export class BoxOfficeService {
     const sortedList = boxOfficeResult.boxOfficeToMovies.sort(
       (a, b) => a.rank - b.rank,
     );
-    const moviesResult = sortedList.map((el) => {
-      return el.movie;
-    });
+    // const moviesResult = sortedList.map((el) => {
+    //   return el.movie;
+    // });
 
-    return moviesResult;
+    return sortedList;
   }
 
-  // audi_acc를 최신 버전으로 업데이트 하기 위해 시간 순서대로 boxOffice 생성해야 함
   async createBoxOffice({
     dateString,
   }: IBoxOfficeServiceCreateBoxOffice): Promise<void> {
@@ -74,9 +73,11 @@ export class BoxOfficeService {
     const boxOfficeList: IBoxOfficeList[] =
       result.data?.boxOfficeResult.dailyBoxOfficeList;
 
-    const boxOffice = new BoxOffice();
-    boxOffice.date = stringToDate(dateString);
-    await this.boxOfficeRepository.save(boxOffice);
+    // const boxOffice = new BoxOffice();
+    // boxOffice.date = stringToDate(dateString);
+    const boxOffice = await this.boxOfficeRepository.save({
+      date: stringToDate(dateString),
+    });
 
     // openDt: yyyy-mm-dd
     // for (let i = 0; i < boxOfficeList.length; i++) {
@@ -101,15 +102,11 @@ export class BoxOfficeService {
         // console.log(movie);
         console.log(el);
 
-        const newMovie = await this.moviesService.updateMovie({
-          id: movie.id,
-          audi_acc: Number(el.audiAcc),
-        });
-
         await this.boxOfficeToMovieService.createBoxOfficeToMovie({
           boxOffice,
-          movie: newMovie,
+          movie,
           rank: index + 1,
+          audi_acc: Number(el.audiAcc),
         });
       }),
     );
