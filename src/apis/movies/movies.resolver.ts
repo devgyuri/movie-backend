@@ -31,4 +31,15 @@ export class MoviesResolver {
   ): Promise<Movie[]> {
     return this.moviesService.findMovieListByGenre({ genreId, page });
   }
+
+  @Query(() => [Movie])
+  fetchMoviesByLatest(
+    @Args('latestId', { type: () => Int }) latestId: number,
+    @Args('page', { type: () => Int, nullable: true }) page: number,
+  ): Promise<Movie[]> {
+    if (latestId === 1) {
+      return this.moviesService.findMovieListBeLatest({ page });
+    }
+    return this.moviesService.findMovieListBeExpected({ page });
+  }
 }

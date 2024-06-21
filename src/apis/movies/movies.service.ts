@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Movie } from './entities/movie.entity';
-import { In, Like, Repository } from 'typeorm';
+import { In, LessThanOrEqual, Like, MoreThan, Repository } from 'typeorm';
 import {
   IMoviesServiceCreateMovie,
   IMoviesServiceInsertActorsInfoArgs,
@@ -20,6 +20,8 @@ import {
   IMoviesServiceFindMovieDetailById,
   IMoviesServiceFindMovieList,
   IMoviesServiceFindMovieListByGenre,
+  IMoviesServiceFindMovieListBeLatest,
+  IMoviesServiceFindMovieListBeExpected,
 } from './interfaces/movies-service.interface';
 import { ActorsService } from '../actors/actors.service';
 import { DirectorsService } from '../directors/directors.service';
@@ -246,6 +248,36 @@ export class MoviesService {
       skip: ((page ?? 1) - 1) * 10,
       order: {
         avg_star: 'DESC',
+      },
+    });
+  }
+
+  async findMovieListBeLatest({
+    page,
+  }: IMoviesServiceFindMovieListBeLatest): Promise<Movie[]> {
+    return this.moviesRepository.find({
+      where: {
+        open_dt: LessThanOrEqual(new Date()),
+      },
+      take: 10,
+      skip: ((page ?? 1) - 1) * 10,
+      order: {
+        open_dt: 'DESC',
+      },
+    });
+  }
+
+  async findMovieListBeExpected({
+    page,
+  }: IMoviesServiceFindMovieListBeExpected): Promise<Movie[]> {
+    return this.moviesRepository.find({
+      where: {
+        open_dt: MoreThan(new Date()),
+      },
+      take: 10,
+      skip: ((page ?? 1) - 1) * 10,
+      order: {
+        open_dt: 'ASC',
       },
     });
   }

@@ -98,6 +98,14 @@ export interface IMoviesServiceFindMovieListByGenre {
   page?: number;
 }
 
+export interface IMoviesServiceFindMovieListBeLatest {
+  page?: number;
+}
+
+export interface IMoviesServiceFindMovieListBeExpected {
+  page?: number;
+}
+
 export enum UPDATE_STAR_STATUS_ENUM {
   CREATE,
   UPDATE,

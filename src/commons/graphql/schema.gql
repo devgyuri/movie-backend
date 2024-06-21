@@ -146,6 +146,7 @@ type Query {
   fetchMovie(id: String!): Movie!
   fetchMovies(keyword: String, page: Int): [Movie!]!
   fetchMoviesByGenre(genreId: Int!, page: Int): [Movie!]!
+  fetchMoviesByLatest(latestId: Int!, page: Int): [Movie!]!
   fetchBoxOfficeToMovie: String!
   fetchComment: String!
   fetchComments(movieId: String!): [Comment!]!
