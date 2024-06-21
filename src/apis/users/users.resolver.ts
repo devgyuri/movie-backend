@@ -27,7 +27,7 @@ export class UsersResolver {
     return this.usersService.findProfile({ id: Number(context.req.user.id) });
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => User)
   createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
   ): Promise<User> {

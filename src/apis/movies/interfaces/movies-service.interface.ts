@@ -93,6 +93,11 @@ export interface IMoviesServiceFindMovieList {
   page?: number;
 }
 
+export interface IMoviesServiceFindMovieListByGenre {
+  genreId: number;
+  page?: number;
+}
+
 export enum UPDATE_STAR_STATUS_ENUM {
   CREATE,
   UPDATE,

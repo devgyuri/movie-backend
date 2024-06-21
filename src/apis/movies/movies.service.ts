@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Movie } from './entities/movie.entity';
-import { Like, Or, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import {
   IMoviesServiceCreateMovie,
   IMoviesServiceInsertActorsInfoArgs,
@@ -19,6 +19,7 @@ import {
   UPDATE_STAR_STATUS_ENUM,
   IMoviesServiceFindMovieDetailById,
   IMoviesServiceFindMovieList,
+  IMoviesServiceFindMovieListByGenre,
 } from './interfaces/movies-service.interface';
 import { ActorsService } from '../actors/actors.service';
 import { DirectorsService } from '../directors/directors.service';
@@ -219,25 +220,32 @@ export class MoviesService {
   }: IMoviesServiceFindMovieList): Promise<Movie[]> {
     console.log('keyword: ', keyword);
 
-    if (keyword) {
-      return this.moviesRepository.find({
-        where: {
-          id: Or(Like('K%'), Like('F%')),
-          title: Like(`%${keyword}%`),
-        },
-        take: 10,
-        skip: ((page ?? 1) - 1) * 10,
-      });
-    }
-
     return this.moviesRepository.find({
       where: {
-        id: Or(Like('K%'), Like('F%')),
+        title: Like(`%${keyword}%`),
       },
       take: 10,
       skip: ((page ?? 1) - 1) * 10,
       order: {
         open_dt: 'DESC',
+      },
+    });
+  }
+
+  async findMovieListByGenre({
+    genreId,
+    page,
+  }: IMoviesServiceFindMovieListByGenre): Promise<Movie[]> {
+    return this.moviesRepository.find({
+      where: {
+        genres: {
+          id: In([genreId]),
+        },
+      },
+      take: 10,
+      skip: ((page ?? 1) - 1) * 10,
+      order: {
+        avg_star: 'DESC',
       },
     });
   }
@@ -285,8 +293,11 @@ export class MoviesService {
       .replaceAll('!HE', '')
       .replace(/ +/g, ' ')
       .trim();
-    const dt =
-      rawData.repRlsDate.length > 0 ? rawData.repRlsDate : rawData.regDate;
+    const dt = rawData.repRlsDate
+      ? rawData.repRlsDate
+      : rawData.regDate
+        ? rawData.regDate
+        : '00010101';
     const open_dt = stringToDate(dt);
     const rating = Number(rawData.rating.replace(/[^0-9]/g, ''));
     const plot = rawData.plots.plot[0].plotText;

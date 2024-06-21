@@ -23,4 +23,12 @@ export class MoviesResolver {
   ): Promise<Movie[]> {
     return this.moviesService.findMovieList({ keyword, page });
   }
+
+  @Query(() => [Movie])
+  fetchMoviesByGenre(
+    @Args('genreId', { type: () => Int }) genreId: number,
+    @Args('page', { type: () => Int, nullable: true }) page: number,
+  ): Promise<Movie[]> {
+    return this.moviesService.findMovieListByGenre({ genreId, page });
+  }
 }

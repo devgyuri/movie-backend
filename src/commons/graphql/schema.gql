@@ -145,6 +145,7 @@ type Query {
   fetchBoxOffice(date: String!): [BoxOfficeToMovie!]!
   fetchMovie(id: String!): Movie!
   fetchMovies(keyword: String, page: Int): [Movie!]!
+  fetchMoviesByGenre(genreId: Int!, page: Int): [Movie!]!
   fetchBoxOfficeToMovie: String!
   fetchComment: String!
   fetchComments(movieId: String!): [Comment!]!
@@ -162,7 +163,7 @@ type Mutation {
   loginUser(email: String!, password: String!): AuthInfo!
   logoutUser: String!
   restoreAccessToken: Token!
-  createUser(createUserInput: CreateUserInput!): Boolean!
+  createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): Profile!
   uploadPicture(picture: Upload!): Url!
   initializeTable: String!
