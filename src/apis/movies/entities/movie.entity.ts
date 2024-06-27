@@ -12,6 +12,7 @@ import { Vod } from 'src/apis/vods/entities/vod.entity';
 import {
   Column,
   Entity,
+  Index,
   JoinTable,
   ManyToMany,
   OneToMany,
@@ -29,6 +30,7 @@ export class Movie {
   @Field(() => String)
   title: string;
 
+  @Index()
   @Column()
   @Field(() => Date)
   open_dt: Date;

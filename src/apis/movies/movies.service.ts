@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Movie } from './entities/movie.entity';
-import { In, LessThanOrEqual, Like, MoreThan, Repository } from 'typeorm';
+import { Between, In, Like, MoreThan, Repository } from 'typeorm';
 import {
   IMoviesServiceCreateMovie,
   IMoviesServiceInsertActorsInfoArgs,
@@ -255,9 +255,13 @@ export class MoviesService {
   async findMovieListBeLatest({
     page,
   }: IMoviesServiceFindMovieListBeLatest): Promise<Movie[]> {
+    const today = new Date();
+    const prev1Month = new Date();
+    prev1Month.setMonth(prev1Month.getMonth() - 1);
+
     return this.moviesRepository.find({
       where: {
-        open_dt: LessThanOrEqual(new Date()),
+        open_dt: Between(prev1Month, today),
       },
       take: 10,
       skip: ((page ?? 1) - 1) * 10,
