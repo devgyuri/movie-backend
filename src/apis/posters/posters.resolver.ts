@@ -1,5 +1,6 @@
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 import { PostersService } from './posters.service';
+import { Poster } from './entities/poster.entity';
 
 @Resolver()
 export class PostersResolver {
@@ -7,8 +8,10 @@ export class PostersResolver {
     private readonly postersService: PostersService, //
   ) {}
 
-  @Query(() => String)
-  fetchPoster(): string {
-    return 'dummy fetch poster';
+  @Query(() => Poster)
+  fetchRepPoster(
+    @Args('movieId') movieId: string, //
+  ): Promise<Poster> {
+    return this.postersService.findRepPoster({ movieId });
   }
 }

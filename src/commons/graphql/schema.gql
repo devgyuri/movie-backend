@@ -152,7 +152,7 @@ type Query {
   fetchComments(movieId: String!): [Comment!]!
   fetchLike(movieId: String!): Boolean!
   fetchLikeCountByMovie(movieId: String!): Int!
-  fetchPoster: String!
+  fetchRepPoster(movieId: String!): Poster!
   fetchSeen(movieId: String!): Boolean!
   fetchSeenCountByMovie(movieId: String!): Int!
   fetchStill: String!

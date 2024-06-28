@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Movie } from './entities/movie.entity';
@@ -10,7 +10,7 @@ import {
   IMoviesServiceInsertGenresInfoArgs,
   IMoviesServiceOpenMovieInfo,
   IMoviesServiceCreateOpenMovieInfo,
-  IMoviesServiceCreateMovieByTitleAndRlsDt,
+  IMoviesServiceFetchOpenMovieInfoByTitleAndRlsDt,
   IMoviesServiceFindMovieByTitleAndRlsDt,
   IMoviesServiceFindMovieById,
   IMoviesServiceGetTmdbImageUrl,
@@ -43,6 +43,7 @@ export class MoviesService {
     private readonly actorsService: ActorsService,
     private readonly directorsService: DirectorsService,
     private readonly genresService: GenresService,
+    @Inject(forwardRef(() => PostersService))
     private readonly postersService: PostersService,
     private readonly stillsService: StillsService,
     private readonly vodsService: VodsService,
@@ -209,11 +210,15 @@ export class MoviesService {
       return result;
     }
 
-    const temp = new Movie();
-    temp.title = title;
-    temp.open_dt = stringToDate(releaseDate);
+    // const temp = new Movie();
+    // temp.title = title;
+    // temp.open_dt = stringToDate(releaseDate);
     // return temp;
-    return this.createMovieByTitleAndRlsDt({ title, releaseDate });
+    const rawData = await this.fetchOpenMovieInfoByTitleAndRlsDt({
+      title,
+      releaseDate,
+    });
+    return this.createOpenMovieInfo({ rawData });
   }
 
   async findMovieList({
@@ -286,10 +291,10 @@ export class MoviesService {
     });
   }
 
-  async createMovieByTitleAndRlsDt({
+  async fetchOpenMovieInfoByTitleAndRlsDt({
     title,
     releaseDate,
-  }: IMoviesServiceCreateMovieByTitleAndRlsDt): Promise<Movie> {
+  }: IMoviesServiceFetchOpenMovieInfoByTitleAndRlsDt): Promise<IMovie> {
     const result = await axios.get(
       'http://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp',
       {
@@ -303,14 +308,7 @@ export class MoviesService {
       },
     );
 
-    console.log('========');
-    console.log('title: ', title, ' releaseDate: ', releaseDate);
-    console.log(result.data);
-    console.log('========');
-
-    return this.createOpenMovieInfo({
-      rawData: result.data?.Data[0].Result[0],
-    });
+    return result.data?.Data[0].Result[0];
   }
 
   async createOpenMovieInfo({
@@ -482,12 +480,6 @@ export class MoviesService {
       ...data,
     });
   }
-
-  // async createMovieAll({
-  //   movieArr,
-  // }: IMoviesServiceCreateMovieAll): Promise<void> {
-  //   await this.moviesRepository.insert(movieArr);
-  // }
 
   async updateMovie(updateInput: IMoviesServiceUpdateMovie): Promise<Movie> {
     const result = await this.moviesRepository.save({

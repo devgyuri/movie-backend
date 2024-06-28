@@ -64,7 +64,7 @@ export interface IMoviesServiceCreateOpenMovieInfo {
   rawData: IMovie;
 }
 
-export interface IMoviesServiceCreateMovieByTitleAndRlsDt {
+export interface IMoviesServiceFetchOpenMovieInfoByTitleAndRlsDt {
   title: string;
   releaseDate: string;
 }
